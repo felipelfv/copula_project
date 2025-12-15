@@ -500,6 +500,7 @@ We consider eleven scenarios, summarized in Table 1. The triplet $(s_{XZ}, s_{YZ
 Within each scenario, we consider multiple copula families (Frank, Gumbel, Clayton, and Gaussian) across a range of parameter values to ensure robustness of the findings. Negative dependence for Gumbel and Clayton copulas is achieved via 90-degree rotation.
 
 \small
+
 | Scenario | Structure | Description |
 |:--------:|:---------:|:------------|
 | 1 | $(+,+,+)$ | Positive confounding, positive conditional |
@@ -515,13 +516,14 @@ Within each scenario, we consider multiple copula families (Frank, Gumbel, Clayt
 | 11 | --- | Simplifying assumption violated |
 
 Table: Summary of simulation scenarios. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$ denotes the sign of dependence in each pair copula: $+$ positive, $-$ negative, $\varnothing$ independence, and $\cdot$ varies across configurations.
+
 \normalsize
 
 ## Results
 
 Figure 1 displays Spearman's $\rho$ and Kendall's $\tau$ for both the marginal pair $(X,Y)$ and the partial copula pair $(U_X, U_Y)$ across all scenarios. The results confirm the theoretical predictions. In conditional independence scenarios (2, 3, and 4), the partial correlations are negligible while marginal correlations can be substantial, demonstrating that the partial copula successfully removes confounding. In scenarios with both confounding and conditional dependence (1, 6, 7), the partial correlations correctly recover the conditional association, which is attenuated relative to the marginal correlations. Notably, scenarios 5 and 8 exhibit Simpson's paradox: marginal and partial correlations have opposite signs, illustrating how the partial copula can reveal conditional associations that are masked or reversed by confounding. Finally, Scenario 11 examines violations of the simplifying assumption. In cases 11a and 11b, where $\theta(z) = \exp(z)$ and $\theta(z) = -\exp(z)$ respectively, the sign of conditional dependence remains constant across all values of $Z$, and the partial correlations closely match the marginal correlations, consistent with Proposition 3.2. In contrast, case 11c, where $\theta(z) = 1 - 2z$, yields near-zero partial correlation despite conditional dependence for almost all values of $Z$, confirming Remark 3.2: opposing conditional associations cancel in expectation.
 
-```{r correlation-plot, echo=FALSE, fig.height=12, fig.width=12}
+```{r correlation-plot, echo=FALSE, fig.height=12, fig.width=12, fig.cap="Marginal vs Partial Correlations Across Scenarios"}
 # DUMBBELL PLOT
 results_dumbbell <- results %>%
   pivot_longer(
@@ -568,7 +570,7 @@ ggplot(results_dumbbell, aes(y = Case_Label)) +
     color = "Type",
     shape = "Coefficient",
     linetype = "Coefficient",
-    title = "Marginal vs Partial Correlations Across Scenarios"
+    title = ""
   ) +
   theme_minimal(base_size = 9) +
   theme(
