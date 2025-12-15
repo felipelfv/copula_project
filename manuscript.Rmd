@@ -8,6 +8,7 @@ output:
   pdf_document:
     latex_engine: xelatex
     number_sections: true
+    citation_package: natbib
     toc: false
   html_document:
     toc: false
@@ -83,15 +84,17 @@ An important result in both copula theory and computational statistics is the so
 
 \begin{proposition}[Probability Integral Transform]
 Let $F$ be an absolutely continuous cumulative distribution function, and let $F^{-1}$ be the inverse function of $F$. Then,
-
-- If $U \sim U(0,1)$, then $F^{-1}(U)$ is a random variable with cumulative distribution function $F$ (which will be denoted as $F^{-1}(U) \sim F$).
-
-- Conversely, if $X \sim F$, then $F(X)$ is a random variable with uniform distribution on $(0,1)$, this is, $F(X) \sim U(0,1)$.
+\begin{itemize}
+\item If $U \sim U(0,1)$, then $F^{-1}(U)$ is a random variable with cumulative distribution function $F$ (which will be denoted as $F^{-1}(U) \sim F$).
+\item Conversely, if $X \sim F$, then $F(X)$ is a random variable with uniform distribution on $(0,1)$, this is, $F(X) \sim U(0,1)$.
+\end{itemize}
 \end{proposition}
 
-An even more general result is available in @rosenblatt1952: @rosenblatt1952 proved that, given a sequence of random variables $X_1, \ldots, X_n$, the random variables $F_1(X_1), F_{X_2|X_1}(X_2|X_1), \ldots, F_{X_n|X_1,\ldots,X_{n-1}}(X_n|X_1, \ldots, X_{n-1})$ are independent and uniformly distributed in the $[0,1]$ range. This suggests that a natural way to have a variable correlated to $X$ but independent of $Z$ is to define $F_{X|Z}(X|Z)$ - this is exactly the idea explored in @bergsma2004 and @patra2016. A key result about those functions is presented below.
+An even more general result is available in @rosenblatt1952: @rosenblatt1952 proved that, given a sequence of random variables $X_1, \ldots, X_n$, the random variables
+$$F_1(X_1), \, F_{X_2|X_1}(X_2|X_1), \, \ldots, \, F_{X_n|X_1,\ldots,X_{n-1}}(X_n|X_1, \ldots, X_{n-1})$$
+are independent and uniformly distributed in the $[0,1]$ range.
 
-\begin{proposition}[@patra2016]
+\begin{proposition}\citep{patra2016}
 Let $(X, Y, Z)$ be an absolutely continuous random vector. Therefore, $X \independent Y | Z$ if and only if $F_{X|Z}(X|Z)$, $F_{Y|Z}(Y|Z)$ and $Z$ are mutually independent.
 \end{proposition}
 
@@ -119,7 +122,8 @@ $$C_{X,Y;Z}(x, y) = \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz,$$
 where $C_{X,Y|Z=z}$ is the conditional copula of $(X, Y)$ given $Z = z$.
 \end{proposition}
 
-*Proof.* Note that
+\begin{proof}
+Note that
 \begin{align*}
 C_{X,Y;Z}(x, y) &= P(\UX \leq x, \UY \leq y) \\
 &= \int_{-\infty}^{\infty} P(\UX \leq x, \UY \leq y | Z = z) f_Z(z) dz \\
@@ -127,9 +131,10 @@ C_{X,Y;Z}(x, y) &= P(\UX \leq x, \UY \leq y) \\
 &= \int_{-\infty}^{\infty} P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z) f_Z(z) dz \\
 &= \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz,
 \end{align*}
-where the third equality comes from applying substitution principle for conditional distributions [Proposition 4.1 of @james1981]; and last equality comes from applying Sklar's theorem [@sklar1959] in $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$.
+where the third equality comes from applying substitution principle for conditional distributions \citep[Proposition 4.1 of][]{james1981}; and last equality comes from applying Sklar's theorem \citep{sklar1959} in $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$.
 
-This application of Sklar's theorem is justified because $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is a cumulative distribution function for any $z \in \mathbb{R}$; Furthermore, $F_{X|Z}(X|z)$ and $F_{Y|Z}(Y|z)$ are, respectively, strictly increasing transformations of $x$ and $y$, because they are cumulative distribution functions for any $z \in \mathbb{R}$; then, from Theorem 2.4.3 in @nelsen2006, the conditional copula identified by Sklar's theorem in $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is the same as the conditional copula of $P(X \leq x, Y \leq y | Z = z)$. Therefore, the last equality is proved taking into account that the univariate conditional distributions are uniform in $[0,1]$.
+This application of Sklar's theorem is justified because $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is a cumulative distribution function for any $z \in \mathbb{R}$; Furthermore, $F_{X|Z}(X|z)$ and $F_{Y|Z}(Y|z)$ are, respectively, strictly increasing transformations of $x$ and $y$, because they are cumulative distribution functions for any $z \in \mathbb{R}$; then, from Theorem 2.4.3 in \citet{nelsen2006}, the conditional copula identified by Sklar's theorem in $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is the same as the conditional copula of $P(X \leq x, Y \leq y | Z = z)$. Therefore, the last equality is proved taking into account that the univariate conditional distributions are uniform in $[0,1]$.
+\end{proof}
 
 Proof of Proposition 3.1 ensures a formal justification to a similar expression that appears in proof of Proposition 1 in @gijbels2015.
 
@@ -140,20 +145,22 @@ Let $(X, Y, Z)$ be a continuous random vector. If the conditional copula of $(X,
 $$C_{X,Y;Z}(x, y) = C_{X,Y|Z}(x, y).$$
 \end{corollary}
 
-*Proof.* This result is a direct consequence of integrating $C_{X,Y|Z=z}(x, y) f_Z(z)$ with respect to $z$ and taking into account that, from the theorem assumption, $C_{X,Y|Z=z}(x, y)$ is constant as a function of $z$.
+\begin{proof}
+This result is a direct consequence of integrating $C_{X,Y|Z=z}(x, y) f_Z(z)$ with respect to $z$ and taking into account that, from the theorem assumption, $C_{X,Y|Z=z}(x, y)$ is constant as a function of $z$.
 \begin{align*}
 C_{X,Y;Z}(x, y) &= \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz \\
 &= \int_{-\infty}^{\infty} C_{X,Y|Z}(x, y) f_Z(z) dz \\
 &= C_{X,Y|Z}(x, y) \int_{-\infty}^{\infty} f_Z(z) dz \\
 &= C_{X,Y|Z}(x, y).
 \end{align*}
+\end{proof}
 
 From this result, it also becomes clear that when $(X, Y)$ are conditionally independent given $Z$ (which produces the conditional copula $C_{X,Y|Z=z}(x, y) = xy$), then the partial copula is the independence copula, which is coherent with lemma 3.1 of @patra2016. However, the reciprocal statement is not true - see next remark.
 
 \begin{remark}
 Corollary 3.1 entails that, if $X \independent Y | Z$, then $C_{X,Y;Z}(x, y) = xy$ (or, equivalently, $\UX$ and $\UY$ are independent).
 
-On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts [@nelsen2012; @gonzalezlopez2024]}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition 3.1,
+On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts \citep{nelsen2012, gonzalezlopez2024}}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition 3.1,
 $$C_{X,Y;Z}(x, y) = \int_0^1 [xy + (1-2z)xy(1-x)(1-y)] dz = xy,$$
 which is the independence copula, which entails, from the definition of the partial copula, that $\UX$ and $\UY$ are independent. However, except for $Z = 0.5$, $X$ and $Y$ are not conditionally independent given $Z = z$.
 
@@ -174,9 +181,11 @@ Let $(X, Y, Z)$ be a continuous random vector. If the conditional copula of $(X,
 In the same way, if the conditional copula of $(X, Y)$ given $Z = z$ has negative quadrant dependence for all $z \in \mathbb{R}$, then the partial copula $C_{X,Y;Z}(x, y)$ has negative quadrant dependence.
 \end{proposition}
 
-*Proof.* If $g(x, y, z) = C_{X,Y|Z=z}(x, y) \geq xy$ for all $z \in \mathbb{R}$, then, by interpreting the constant $xy$ as a degenerate random variable and applying the monotonicity of expectation [property E2 of section 3.3 of @james1981], we have the inequality
+\begin{proof}
+If $g(x, y, z) = C_{X,Y|Z=z}(x, y) \geq xy$ for all $z \in \mathbb{R}$, then, by interpreting the constant $xy$ as a degenerate random variable and applying the monotonicity of expectation \citep[property E2 of section 3.3 of][]{james1981}, we have the inequality
 $$xy \leq E[g(x, y, Z)] = C_{X,Y;Z}(x, y).$$
 Therefore, $C_{X,Y;Z}(x, y) \geq xy$, as we wished to prove. The same argument holds for negative quadrant dependence.
+\end{proof}
 
 An intuitive interpretation for Proposition 3.2 is that, whenever the conditional association between $X$ and $Y$ is positive [negative] for all values of $Z$, the partial copula also exhibits positive [negative] dependence.
 
@@ -193,15 +202,17 @@ Let $X, Y, Z$ be jointly continuous random variables. Then,
 $$D(\UX, \UY) \leq \sup_{z \in \mathbb{R}} (D(X, Y | Z = z)).$$
 \end{proposition}
 
-*Proof.* Suppose $\sup_{z \in \mathbb{R}}(D(X, Y | Z = z)) = k$, for some $k \in [0,1]$. This means that, for every $z \in \mathbb{R}$, it holds that
+\begin{proof}
+Suppose $\sup_{z \in \mathbb{R}}(D(X, Y | Z = z)) = k$, for some $k \in [0,1]$. This means that, for every $z \in \mathbb{R}$, it holds that
 $$k \geq D(X, Y | Z = z) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y|Z=z}(x, y) - xy|),$$
 which entails that $|C_{X,Y|Z=z}(x, y) - xy| \leq k/4$ for every $x, y \in [0, 1]$, $z \in \mathbb{R}$. Therefore,
 $$C_{X,Y|Z=z}(x, y) \in \left[xy - \frac{k}{4}, xy + \frac{k}{4}\right].$$
 
-The remainder of the proof comes from remembering that the partial copula evaluated in a point $(x, y) \in [0, 1]^2$ is the expectation of a random variable (see Remark 3.3), which enables using the monotonicity of expectation: property E2 of section 3.3 of @james1981 readily entails that, if a random variable belongs almost surely to an interval, then the same happens to its expectation. Therefore,
+The remainder of the proof comes from remembering that the partial copula evaluated in a point $(x, y) \in [0, 1]^2$ is the expectation of a random variable (see Remark 3.3), which enables using the monotonicity of expectation: property E2 of section 3.3 of \citet{james1981} readily entails that, if a random variable belongs almost surely to an interval, then the same happens to its expectation. Therefore,
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
 for every $x, y \in [0, 1]$. Therefore, $|C_{X,Y;Z}(x, y) - xy| \leq k/4$, which entails that
 $$D(\UX, \UY) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y}(x, y) - xy|) \leq k.$$
+\end{proof}
 
 The last result can be intuitively interpreted in the following way: regardless of simplifying assumption holding or not, if all the conditional copulas are distant from independence at most $k$, then the partial copula is distant from independence at most $k$ too. This entails that, if all conditional copulas are close to the independence case, then the partial copula is necessarily close to independence.
 
@@ -212,14 +223,16 @@ Let $X, Y, Z$ be jointly continuous random variables. If $(D(X, Y | Z = z)) \leq
 $$\max(-1, -3k) \leq \rho(X, Y; Z) \leq \min(1, 3k).$$
 \end{proposition}
 
-*Proof.* The proof of Proposition 3.3 entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+\begin{proof}
+The proof of Proposition 3.3 entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
 which entails that
 $$\int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy \in \left[\frac{1-k}{4}, \frac{1+k}{4}\right].$$
 
-Theorem 5.1.6 in @nelsen2006 states that, given a copula $C$, its Pearson's correlation can be represented as $12 \int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy - 3$. Applying this representation in the partial copula, it holds that
+Theorem 5.1.6 in \citet{nelsen2006} states that, given a copula $C$, its Pearson's correlation can be represented as $12 \int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy - 3$. Applying this representation in the partial copula, it holds that
 $$-3k \leq \rho(X, Y; Z) \leq 3k,$$
-as we wished to prove. The final bound in the proposition is obtained taking into account that Pearson's coefficient belongs to $[-1, 1]$ range [see Theorem 5.1.9 in @nelsen2006].
+as we wished to prove. The final bound in the proposition is obtained taking into account that Pearson's coefficient belongs to $[-1, 1]$ range \citep[see Theorem 5.1.9 in][]{nelsen2006}.
+\end{proof}
 
 Additionally, the connection between the correlation in the conditional copulas and in the partial copula can be summarized in the following theorem.
 
@@ -228,7 +241,8 @@ Let $X, Y, Z$ be jointly continuous random variables. Then,
 $$\rho(X, Y; Z) = \int_{-\infty}^{\infty} \rho(X, Y | Z = z) f_Z(z) dz.$$
 \end{proposition}
 
-*Proof.* Applying Equation 5.1.15c of @nelsen2006 in the partial copula, we obtain
+\begin{proof}
+Applying Equation 5.1.15c of \citet{nelsen2006} in the partial copula, we obtain
 $$\rho(X, Y; Z) = 12 \int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy - 3.$$
 Now using representation from Proposition 3.1, we obtain
 \begin{align*}
@@ -237,6 +251,7 @@ Now using representation from Proposition 3.1, we obtain
 &= 12 \int_{-\infty}^{\infty} \left(\frac{\rho(X, Y | Z = z) + 3}{12}\right) f_Z(z) dz - 3 \\
 &= \int_{-\infty}^{\infty} \rho(X, Y | Z = z) f_Z(z) dz.
 \end{align*}
+\end{proof}
 
 That is, the Pearson's correlation induced by the partial copula is the expected conditional Pearson's correlation - this greatly clarifies the role of conditional correlations in determining partial correlation.
 
@@ -250,7 +265,9 @@ $$C_{X,Y;Z}(x, y) = xy + \theta f(x) g(y),$$
 where $\theta = \int_{-\infty}^{\infty} h(z) f_Z(z) dz$.
 \end{proposition}
 
-*Proof.* This result is a direct consequence of applying Proposition 3.1 in the conditional copulas $C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y)$.
+\begin{proof}
+This result is a direct consequence of applying Proposition 3.1 in the conditional copulas $C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y)$.
+\end{proof}
 
 The family introduced in @rodriguezlallena2004 encompasses the Farlie-Gumbel-Morgenstern Copula, and, for this reason, can be considered a disturbance of independence condition. @komelj2010 showed that all copulas on this family have Spearman's correlation coefficient belonging to $[-3/4, 3/4]$, and @garcia2016 proved that the copulas of @rodriguezlallena2004 maximize a certain type of entropy. In this sense, the last proposition gives an additional support into the insight that, when all the conditional copulas are close to the independence, then the partial copula is also close to independence.
 
@@ -591,15 +608,13 @@ ggplot(results_dumbbell, aes(y = Case_Label)) +
 
 # Discussion
 
-\newpage{}
+\newpage
 
 # References
 
 <div id="refs"></div>
 
-\bibliography{refs.bib}
-
-\newpage{}
+\newpage
 
 # Appendix 
 
