@@ -114,7 +114,7 @@ Note that $C_{X,Y;Z}$ fully satisfies the definition of copula (Definition 2.1),
 
 The partial copula $C_{X,Y;Z}$ may be seen - in a similar way to partial correlation - as a notion that represents the stochastic dependence between $(X, Y)$ after removing the effect of a covariate $Z$. Further, differently from the notion of conditional copula, $C_{X,Y;Z}$ does not depend on the specification of a specific value $z$ of $Z$.
 
-Next result shows that the partial copula $C_{X,Y;Z}$ can be written as a mixture of all conditional copulas $C_{X,Y|Z=z}$; besides providing an analytic representation for the partial copula, this result highlights the capability of the partial copula in capturing conditional dependence.
+Next result shows that the partial copula $C_{X,Y;Z}$ can be written as a mixture of all conditional copulas $C_{X,Y|Z=z}$; this result, in addition to providing an analytic representation for the partial copula, highlights the capability of the concept in capturing conditional dependence.
 
 \begin{proposition}
 Let $(X, Y, Z)$ be a continuous random vector. The partial copula $C_{X,Y;Z}$ can be written as
