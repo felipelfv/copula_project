@@ -78,6 +78,8 @@ Sklar's theorem [@sklar1959; @nelsen2006] guarantees that, given two any random 
 $$P(X \leq x, Y \leq y) = C(F_X(x), F_Y(y)),$$
 where $F_X$ and $F_Y$ are, respectively, the cumulative distribution functions of $X$ and $Y$, and $C$ is a copula - if the variables are continuous, then $C$ is unique and it may be called "the copula of $(X,Y)$". It's possible to note that the copula of $(X,Y)$ is the CDF of $(F_X(X), F_Y(Y))$.
 
+The representation provided by Sklar's theorem shows that copulas are a ``marginal-free'' way to study the dependence between two (or more) random variables, which makes clear that this is a central notion in the study of stochastic dependence. For further arguments regarding the importance of copula theory in the study of stochastic dependence, see @embrechts2002 and see also the monographs from @nelsen2006 and @joe2014.
+
 ## Probability integral transform
 
 An important result in both copula theory and computational statistics is the so-called "probability integral transform", presented below. This result ensures that a cumulative distribution function makes a variable uniformly distributed when it is used as a transformation applied in the random variable. Given that copulas are cumulative distribution functions of variables uniformly distributed in $[0,1]$, the importance of this result for copula theory seems evident.
@@ -97,6 +99,8 @@ are independent and uniformly distributed in the $[0,1]$ range.
 \begin{proposition}\citep{patra2016}
 Let $(X, Y, Z)$ be an absolutely continuous random vector. Therefore, $X \independent Y | Z$ if and only if $F_{X|Z}(X|Z)$, $F_{Y|Z}(Y|Z)$ and $Z$ are mutually independent.
 \end{proposition}
+
+This result suggests that studying the joint distribution of $F_{X|Z}(X|Z)$ and $F_{Y|Z}(Y|Z)$ is a natural way to study the dependence between $X$ and $Y$ adjusted by $Z$, because those two quantities would be independent in the particular case that they are conditionally independent given $Z$ (therefore, this joint distribution would remove the ``spurious association'' induced by $Z$). In the context of causal inference, if $Z$ is the confounder of $(X,Y)$, the two variables would be conditionally independent given $Z$, provided they are causally unrelated (see considerations about fork models in [@pearl2009, @pearl2016].
 
 # The partial copula
 
