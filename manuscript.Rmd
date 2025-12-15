@@ -6,6 +6,7 @@ author:
 date: "December 2025"
 output:
   pdf_document:
+    latex_engine: xelatex
     number_sections: true
     toc: false
   html_document:
@@ -152,7 +153,7 @@ From this result, it also becomes clear that when $(X, Y)$ are conditionally ind
 \begin{remark}
 Corollary 3.1 entails that, if $X \independent Y | Z$, then $C_{X,Y;Z}(x, y) = xy$ (or, equivalently, $\UX$ and $\UY$ are independent).
 
-On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts. See @nelsen2012 and @gonzalezlopez2024.}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition 3.1,
+On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts [@nelsen2012; @gonzalezlopez2024]}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition 3.1,
 $$C_{X,Y;Z}(x, y) = \int_0^1 [xy + (1-2z)xy(1-x)(1-y)] dz = xy,$$
 which is the independence copula, which entails, from the definition of the partial copula, that $\UX$ and $\UY$ are independent. However, except for $Z = 0.5$, $X$ and $Y$ are not conditionally independent given $Z = z$.
 
