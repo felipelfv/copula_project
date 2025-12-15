@@ -1,0 +1,666 @@
+---
+title: "Covariate-adjusted statistical dependence representation through partial copulas: bounds and new insights"
+author:
+- Vinícius Litvinoff Justus (Carlos III University of Madrid, Spain)
+- Felipe Fontana Vieira (Ghent University, Belgium)
+date: "December 2025"
+output:
+  pdf_document:
+    number_sections: true
+    toc: false
+  html_document:
+    toc: false
+    df_print: paged
+header-includes:
+- \usepackage{amsmath}
+- \usepackage{amssymb}
+- \usepackage{amsthm}
+- \newtheorem{definition}{Definition}
+- \newtheorem{proposition}{Proposition}
+- \newtheorem{corollary}{Corollary}
+- \newtheorem{remark}{Remark}
+- \newcommand{\UX}{U_X}
+- \newcommand{\UY}{U_Y}
+- \newcommand{\independent}{\perp\!\!\!\perp}
+bibliography: references.bib
+link-citations: true
+abstract: "In this paper, we revisit the notion of partial copula, which is a way
+  to represent the dependence between two random variables after removing their dependence with a third variable. We give a formal proof for an analytical representation of the partial copula previously discussed in the literature, and then we use it to prove new results showing how the dependence properties of the conditional copulas constrain the form of the partial copula. Finally, a simulation study is conducted to illustrate the results and to show the potential of partial copula as a way to describe covariate-adjusted statistical dependence. This highlights the potential of the method to solve the Simpson paradox and to be used in causal inference problems.\n"
+keywords: Copula theory; Rosenblatt transformation; partial correlation; causal inference
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, fig.align = 'center')
+
+library(rvinecopulib)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+
+set.seed(123)
+n <- 5000
+```
+
+# Introduction
+
+Quantifying the strength of the statistical association between two random variables, controlled by one or more variables (usually called covariates or control variables), is an old problem in statistics and widely discussed in the context of linear models and regression coefficients [@kutner2005; @baba2004; @kim2015]. It is well established in the statistical literature that, under wide conditions, conditionally independent random variables are unconditionally correlated [see theorem 2 in @oneill2009] - therefore, in the context of causal models, two variables causally unrelated may be correlated if they are both affected by a third variable, called confounder [@pearl2009; @pearl2016]. For this reason, the analysis of conditional and partial associations is of great importance in statistical analysis of observational data; in the context of regression analysis, this is done adding control variables [@kutner2005], and, in the context of correlation analysis, this is done through partial correlation [@baba2004; @kim2015]. A brief introduction on how to choose control variables properly (from a causal viewpoint) is presented in @cinelli2022.
+
+In the same way that using a single numerical index (such as the expectation) is not as informative as knowing the distribution of a variable, it is also true that correlation coefficients fail in capturing several aspects of the dependence structure of a random vector - for this reason, copula theory offers a much richer way to study statistical dependence^[@embrechts2002 presents an example of two bivariate distributions share same marginal distributions and same Pearson's correlation value, but the tail dependence is not the same because the copulas are not the same. This exemplifies the limitation of using Pearson's correlation coefficient to summarise the dependence structure.]. Copulas are functions such that, given the copula and the univariate (marginal) distributions of a random vector, the joint distribution of the variables is fully characterized - therefore, they fully characterize the dependence structure behind a random vector [@nelsen2006; @joe2014]. In fact, it has been proved that copulas offer sufficient and necessary conditions for independence [Theorem 2.4.2 in @nelsen2006] and conditional independence [Theorem 1 in @gonzalezlopez2024]. Therefore, having the notion of partial copula is of great relevance to fully study the stochastic dependence between two variables after controlling for some confounder, because they are a natural extension of the notion of partial correlation.
+
+Partial copulas have been introduced in @bergsma2004 as a tool to construct a conditional independence test [which also have been explored in @bergsma2011; @patra2016; and @petersen2021], and their use in vine copula and stochastic process modeling have been discussed in the literature [@bladt2022; @bauer2016; @spanhel2019]. However, to the best of our knowledge, the use of this notion as a way to formally study covariate-adjusted dependence have not been explored enough in the literature [despite the existence of some references exploring related matters, see @gijbels2015 and @spanhel2016]. Furthermore, in several references, the partial copula is just described as the joint distribution of two specific latent variables (defined in next section), but without a formal definition. This paper was written aiming to fill those gaps, providing a formal definition for the notion of partial copulas, deducing its analytical expression and using it to derive several new bounds and properties.
+
+In the context of linear models, the use of copulas to enable causal inference was proposed in @park2012 and further studied in @falkenstrom2023; the method proposed by the authors is a data-driven method that attempts to remove the confounder effect without measuring the confounding variable directly (which may require strong untestable assumptions). More recently, the use of vine copulas in causal inference was considered by @justus2024 and @czado2025 - however, to the best of our knowledge, the use of partial copulas to quantify causal effects is not yet properly explored in the literature.
+
+The paper is organized as follows. Next section provides all the necessary background to the study of partial copulas: Rosenblatt functions, probability integral transform and copula functions are introduced. Section 3 presents the notion of partial copula and proves several properties. A simulation study is conducted in Section 4, and final considerations are given in Section 5.
+
+# Background
+
+## Copulas
+
+Copulas are multivariate functions $[0,1]^d \to [0,1]$ used to describe the dependence structure of random vectors of dimension $d \in \mathbb{N}$. The definition in the bivariate case is presented below.
+
+\begin{definition}
+A 2-copula is a function $C: [0,1]^2 \to [0,1]$ with the following properties:
+
+(i) $C(u,0) = C(0,v) = 0$, and $C(u,1) = u$, $C(1,v) = v$, $\forall u,v: u,v \in [0,1]$;
+
+(ii) for every $u_i, v_i \in [0,1]$, $i = 1,2$, such that $u_1 \leq u_2$ and $v_1 \leq v_2$,
+$$C(u_2, v_2) - C(u_2, v_1) - C(u_1, v_2) + C(u_1, v_1) \geq 0.$$
+\end{definition}
+
+Note that Definition 2.1 is equivalent to the definition of 2-variate cumulative distribution function (CDF) whose marginal distributions are uniform in $[0,1]$ range. Therefore, given two any random variables $U, V$ such that $U \sim U(0,1)$ and $V \sim U(0,1)$, the cumulative distribution function $P(U \leq u, V \leq v)$ is necessarily a copula (because it satisfies Definition 2.1).
+
+Sklar's theorem [@sklar1959; @nelsen2006] guarantees that, given two any random variables $X$ and $Y$, it holds that
+$$P(X \leq x, Y \leq y) = C(F_X(x), F_Y(y)),$$
+where $F_X$ and $F_Y$ are, respectively, the cumulative distribution functions of $X$ and $Y$, and $C$ is a copula - if the variables are continuous, then $C$ is unique and it may be called "the copula of $(X,Y)$". It's possible to note that the copula of $(X,Y)$ is the CDF of $(F_X(X), F_Y(Y))$.
+
+## Probability integral transform
+
+An important result in both copula theory and computational statistics is the so-called "probability integral transform", presented below. This result ensures that a cumulative distribution function makes a variable uniformly distributed when it is used as a transformation applied in the random variable. Given that copulas are cumulative distribution functions of variables uniformly distributed in $[0,1]$, the importance of this result for copula theory seems evident.
+
+\begin{proposition}[Probability Integral Transform]
+Let $F$ be an absolutely continuous cumulative distribution function, and let $F^{-1}$ be the inverse function of $F$. Then,
+
+- If $U \sim U(0,1)$, then $F^{-1}(U)$ is a random variable with cumulative distribution function $F$ (which will be denoted as $F^{-1}(U) \sim F$).
+
+- Conversely, if $X \sim F$, then $F(X)$ is a random variable with uniform distribution on $(0,1)$, this is, $F(X) \sim U(0,1)$.
+\end{proposition}
+
+An even more general result is available in @rosenblatt1952: @rosenblatt1952 proved that, given a sequence of random variables $X_1, \ldots, X_n$, the random variables $F_1(X_1), F_{X_2|X_1}(X_2|X_1), \ldots, F_{X_n|X_1,\ldots,X_{n-1}}(X_n|X_1, \ldots, X_{n-1})$ are independent and uniformly distributed in the $[0,1]$ range. This suggests that a natural way to have a variable correlated to $X$ but independent of $Z$ is to define $F_{X|Z}(X|Z)$ - this is exactly the idea explored in @bergsma2004 and @patra2016. A key result about those functions is presented below.
+
+\begin{proposition}[@patra2016]
+Let $(X, Y, Z)$ be an absolutely continuous random vector. Therefore, $X \independent Y | Z$ if and only if $F_{X|Z}(X|Z)$, $F_{Y|Z}(Y|Z)$ and $Z$ are mutually independent.
+\end{proposition}
+
+# The partial copula
+
+This section presents the notion of partial copula, originally introduced in @bergsma2004.
+
+\begin{definition}
+Let $(X, Y, Z)$ be an absolutely continuous random vector. The partial copula of $(X, Y)$ controlled by $Z$, which we denote by $C_{X,Y;Z}$, is defined as
+$$C_{X,Y;Z}(x, y) = P(\UX \leq x, \UY \leq y),$$
+where $\UX = F_{X|Z}(X|Z)$ and $\UY = F_{Y|Z}(Y|Z)$.
+\end{definition}
+
+\begin{remark}
+Note that $C_{X,Y;Z}$ fully satisfies the definition of copula (Definition 2.1), because $C_{X,Y;Z}$ is the cumulative distribution function of two random variables uniformly distributed in $[0,1]$.
+\end{remark}
+
+The partial copula $C_{X,Y;Z}$ may be seen - in a similar way to partial correlation - as a notion that represents the stochastic dependence between $(X, Y)$ after removing the effect of a covariate $Z$. Further, differently from the notion of conditional copula, $C_{X,Y;Z}$ does not depend on the specification of a specific value $z$ of $Z$.
+
+Next result shows that the partial copula $C_{X,Y;Z}$ can be written as a mixture of all conditional copulas $C_{X,Y|Z=z}$; besides providing an analytic representation for the partial copula, this result highlights the capability of the partial copula in capturing conditional dependence.
+
+\begin{proposition}
+Let $(X, Y, Z)$ be a continuous random vector. The partial copula $C_{X,Y;Z}$ can be written as
+$$C_{X,Y;Z}(x, y) = \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz,$$
+where $C_{X,Y|Z=z}$ is the conditional copula of $(X, Y)$ given $Z = z$.
+\end{proposition}
+
+*Proof.* Note that
+\begin{align*}
+C_{X,Y;Z}(x, y) &= P(\UX \leq x, \UY \leq y) \\
+&= \int_{-\infty}^{\infty} P(\UX \leq x, \UY \leq y | Z = z) f_Z(z) dz \\
+&= \int_{-\infty}^{\infty} P(F_{X|Z}(X|Z) \leq x, F_{Y|Z}(Y|Z) \leq y | Z = z) f_Z(z) dz \\
+&= \int_{-\infty}^{\infty} P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z) f_Z(z) dz \\
+&= \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz,
+\end{align*}
+where the third equality comes from applying substitution principle for conditional distributions [Proposition 4.1 of @james1981]; and last equality comes from applying Sklar's theorem [@sklar1959] in $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$.
+
+This application of Sklar's theorem is justified because $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is a cumulative distribution function for any $z \in \mathbb{R}$; Furthermore, $F_{X|Z}(X|z)$ and $F_{Y|Z}(Y|z)$ are, respectively, strictly increasing transformations of $x$ and $y$, because they are cumulative distribution functions for any $z \in \mathbb{R}$; then, from Theorem 2.4.3 in @nelsen2006, the conditional copula identified by Sklar's theorem in $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is the same as the conditional copula of $P(X \leq x, Y \leq y | Z = z)$. Therefore, the last equality is proved taking into account that the univariate conditional distributions are uniform in $[0,1]$.
+
+Proof of Proposition 3.1 ensures a formal justification to a similar expression that appears in proof of Proposition 1 in @gijbels2015.
+
+An interesting consequence of the last proposition - summarized in the following corollary - is that, when the "simplifying assumption" [commonly used in Vine copula modeling, see @czado2022] is adopted, then the partial copula coincides with the conditional copula.
+
+\begin{corollary}
+Let $(X, Y, Z)$ be a continuous random vector. If the conditional copula of $(X, Y)$ given $Z = z$ is constant as a function of $z$ ("simplifying assumption"), then
+$$C_{X,Y;Z}(x, y) = C_{X,Y|Z}(x, y).$$
+\end{corollary}
+
+*Proof.* This result is a direct consequence of integrating $C_{X,Y|Z=z}(x, y) f_Z(z)$ with respect to $z$ and taking into account that, from the theorem assumption, $C_{X,Y|Z=z}(x, y)$ is constant as a function of $z$.
+\begin{align*}
+C_{X,Y;Z}(x, y) &= \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz \\
+&= \int_{-\infty}^{\infty} C_{X,Y|Z}(x, y) f_Z(z) dz \\
+&= C_{X,Y|Z}(x, y) \int_{-\infty}^{\infty} f_Z(z) dz \\
+&= C_{X,Y|Z}(x, y).
+\end{align*}
+
+From this result, it also becomes clear that when $(X, Y)$ are conditionally independent given $Z$ (which produces the conditional copula $C_{X,Y|Z=z}(x, y) = xy$), then the partial copula is the independence copula, which is coherent with lemma 3.1 of @patra2016. However, the reciprocal statement is not true - see next remark.
+
+\begin{remark}
+Corollary 3.1 entails that, if $X \independent Y | Z$, then $C_{X,Y;Z}(x, y) = xy$ (or, equivalently, $\UX$ and $\UY$ are independent).
+
+On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts. See @nelsen2012 and @gonzalezlopez2024.}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition 3.1,
+$$C_{X,Y;Z}(x, y) = \int_0^1 [xy + (1-2z)xy(1-x)(1-y)] dz = xy,$$
+which is the independence copula, which entails, from the definition of the partial copula, that $\UX$ and $\UY$ are independent. However, except for $Z = 0.5$, $X$ and $Y$ are not conditionally independent given $Z = z$.
+
+Therefore, $\UX \independent \UY$ is a necessary but not sufficient condition for $X \independent Y | Z$. A possible explanation for this fact is that, in the example presented in the remark, the conditional association of $(X, Y)$ given $Z = z$ is positive for some values of $z$ and negative for other values of $z$. In this sense, the partial copula represents a kind of "average conditional association"; this fact is shown in next remark.
+\end{remark}
+
+\begin{remark}
+Let $g(x, y, z) = C_{X,Y|Z=z}(x, y)$. $g(x, y, Z)$ is a random variable, and Proposition 3.1 entails that
+$$C_{X,Y;Z}(x, y) = E[g(x, y, Z)],$$
+which means that the partial copula is the expected conditional copula.
+\end{remark}
+
+Given the functional relationship between the partial and the conditional copulas, an interesting research line that emerges is studying in what extent properties of the conditional copulas constrain the properties of the partial copula. A first result on this matter is given by next proposition. The result is based on the notions of quadrant positive and quadrant negative dependence: a copula $C$ is said to have quadrant positive dependence (QPD) if $C(u, v) \geq uv$ for all $(u, v) \in [0,1]^2$. In an analogous way, the copula has quadrant negative dependence (QND) if $C(u, v) \leq uv$ for all $(u, v) \in [0,1]^2$ [@joe2014]. A direct consequence of the fact that the partial copula is an expected conditional copula is given by the following proposition.
+
+\begin{proposition}
+Let $(X, Y, Z)$ be a continuous random vector. If the conditional copula of $(X, Y)$ given $Z = z$ has positive quadrant dependence for all $z \in \mathbb{R}$, then the partial copula $C_{X,Y;Z}(x, y)$ has positive quadrant dependence.
+
+In the same way, if the conditional copula of $(X, Y)$ given $Z = z$ has negative quadrant dependence for all $z \in \mathbb{R}$, then the partial copula $C_{X,Y;Z}(x, y)$ has negative quadrant dependence.
+\end{proposition}
+
+*Proof.* If $g(x, y, z) = C_{X,Y|Z=z}(x, y) \geq xy$ for all $z \in \mathbb{R}$, then, by interpreting the constant $xy$ as a degenerate random variable and applying the monotonicity of expectation [property E2 of section 3.3 of @james1981], we have the inequality
+$$xy \leq E[g(x, y, Z)] = C_{X,Y;Z}(x, y).$$
+Therefore, $C_{X,Y;Z}(x, y) \geq xy$, as we wished to prove. The same argument holds for negative quadrant dependence.
+
+An intuitive interpretation for Proposition 3.2 is that, whenever the conditional association between $X$ and $Y$ is positive [negative] for all values of $Z$, the partial copula also exhibits positive [negative] dependence.
+
+Next proposition uses a dependence measure based on Kolmogorov distance, which, for simplicity, we will call it as Kolmogorov distance dependence (KDD). This coefficient was introduced in @wolff1977 and @schweizer1981, and is defined as
+$$D(X, Y) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y}(x, y) - xy|).$$
+It is immediate to see that KDD is proportional to the Kolmogorov distance between a given copula and the independence copula; the constant 4 ensures that $D(X, Y) \in [0, 1]$. This coefficient is constructed intending to measure in what extent a copula deviates from independence, without distinguishing between "positive" and "negative" dependence; in this sense, values closer to 0 represent independence and cases closer to 1 represent strong dependencee - for further details, see @wolff1977 and @schweizer1981^[Note that the behavior of KDD differs from the behavior of the so-called "concordance measures", such as Separman's
+correlation coefficient, which may be equal to zero even if the two variables are not independent [@garciaportugues2025].
+This happens intuitively because dependence and concordance measures have two different goals: the former ones measure
+deviation from indepenendence, and the last ones measures the degree os monothonic association [see @nelsen2006; @joe2014].]. The following proposition shows how the value of KDD in the conditional copulas
+constrains the value of KDD in the partial copula.
+
+\begin{proposition}
+Let $X, Y, Z$ be jointly continuous random variables. Then,
+$$D(\UX, \UY) \leq \sup_{z \in \mathbb{R}} (D(X, Y | Z = z)).$$
+\end{proposition}
+
+*Proof.* Suppose $\sup_{z \in \mathbb{R}}(D(X, Y | Z = z)) = k$, for some $k \in [0,1]$. This means that, for every $z \in \mathbb{R}$, it holds that
+$$k \geq D(X, Y | Z = z) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y|Z=z}(x, y) - xy|),$$
+which entails that $|C_{X,Y|Z=z}(x, y) - xy| \leq k/4$ for every $x, y \in [0, 1]$, $z \in \mathbb{R}$. Therefore,
+$$C_{X,Y|Z=z}(x, y) \in \left[xy - \frac{k}{4}, xy + \frac{k}{4}\right].$$
+
+The remainder of the proof comes from remembering that the partial copula evaluated in a point $(x, y) \in [0, 1]^2$ is the expectation of a random variable (see Remark 3.3), which enables using the monotonicity of expectation: property E2 of section 3.3 of @james1981 readily entails that, if a random variable belongs almost surely to an interval, then the same happens to its expectation. Therefore,
+$$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
+for every $x, y \in [0, 1]$. Therefore, $|C_{X,Y;Z}(x, y) - xy| \leq k/4$, which entails that
+$$D(\UX, \UY) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y}(x, y) - xy|) \leq k.$$
+
+The last result can be intuitively interpreted in the following way: regardless of simplifying assumption holding or not, if all the conditional copulas are distant from independence at most $k$, then the partial copula is distant from independence at most $k$ too. This entails that, if all conditional copulas are close to the independence case, then the partial copula is necessarily close to independence.
+
+Furthermore, it is possible to also bound Pearson's correlation coefficient (here denoted by letter $\rho$) in the partial copula, provided an upper bound for the KDD of the conditional copulas is also known (it is worth remembering that Pearson's correlation is also a functional of the copula, see @fredricks2007).
+
+\begin{proposition}
+Let $X, Y, Z$ be jointly continuous random variables. If $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+$$\max(-1, -3k) \leq \rho(X, Y; Z) \leq \min(1, 3k).$$
+\end{proposition}
+
+*Proof.* The proof of Proposition 3.3 entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+$$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
+which entails that
+$$\int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy \in \left[\frac{1-k}{4}, \frac{1+k}{4}\right].$$
+
+Theorem 5.1.6 in @nelsen2006 states that, given a copula $C$, its Pearson's correlation can be represented as $12 \int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy - 3$. Applying this representation in the partial copula, it holds that
+$$-3k \leq \rho(X, Y; Z) \leq 3k,$$
+as we wished to prove. The final bound in the proposition is obtained taking into account that Pearson's coefficient belongs to $[-1, 1]$ range [see Theorem 5.1.9 in @nelsen2006].
+
+Additionally, the connection between the correlation in the conditional copulas and in the partial copula can be summarized in the following theorem.
+
+\begin{proposition}
+Let $X, Y, Z$ be jointly continuous random variables. Then,
+$$\rho(X, Y; Z) = \int_{-\infty}^{\infty} \rho(X, Y | Z = z) f_Z(z) dz.$$
+\end{proposition}
+
+*Proof.* Applying Equation 5.1.15c of @nelsen2006 in the partial copula, we obtain
+$$\rho(X, Y; Z) = 12 \int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy - 3.$$
+Now using representation from Proposition 3.1, we obtain
+\begin{align*}
+\rho(X, Y; Z) &= 12 \int_0^1 \int_0^1 \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz dx dy - 3 \\
+&= 12 \int_{-\infty}^{\infty} \left(\int_0^1 \int_0^1 C_{X,Y|Z=z}(x, y) dx dy \right) f_Z(z) dz - 3 \\
+&= 12 \int_{-\infty}^{\infty} \left(\frac{\rho(X, Y | Z = z) + 3}{12}\right) f_Z(z) dz - 3 \\
+&= \int_{-\infty}^{\infty} \rho(X, Y | Z = z) f_Z(z) dz.
+\end{align*}
+
+That is, the Pearson's correlation induced by the partial copula is the expected conditional Pearson's correlation - this greatly clarifies the role of conditional correlations in determining partial correlation.
+
+Finally, the next result shows that, when the conditional copulas $C_{X,Y|Z=z}$ can be parametrized in a specific way such that all the conditional copulas belong to the nonparametric family introduced in @rodriguezlallena2004, then the resulting partial copula also belongs to that family.
+
+\begin{proposition}
+If the conditional copula has the functional form
+$$C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y),$$
+where $f, g, h$ are real functions, then the partial copula of $(X, Y)$ adjusted by $Z$ is given by
+$$C_{X,Y;Z}(x, y) = xy + \theta f(x) g(y),$$
+where $\theta = \int_{-\infty}^{\infty} h(z) f_Z(z) dz$.
+\end{proposition}
+
+*Proof.* This result is a direct consequence of applying Proposition 3.1 in the conditional copulas $C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y)$.
+
+The family introduced in @rodriguezlallena2004 encompasses the Farlie-Gumbel-Morgenstern Copula, and, for this reason, can be considered a disturbance of independence condition. @komelj2010 showed that all copulas on this family have Spearman's correlation coefficient belonging to $[-3/4, 3/4]$, and @garcia2016 proved that the copulas of @rodriguezlallena2004 maximize a certain type of entropy. In this sense, the last proposition gives an additional support into the insight that, when all the conditional copulas are close to the independence, then the partial copula is also close to independence.
+
+# Simulation study
+
+```{r simulation, echo=FALSE}
+library(rvinecopulib); library(ggplot2)
+library(dplyr); library(tidyr)
+
+set.seed(123); n <- 5000
+
+structure <- cvine_structure(c(1, 2, 3))
+indep_par <- numeric(0)
+
+# core sim function
+simulate_vine <- function(family_xz, rot_xz, par_xz, 
+                          family_yz, rot_yz, par_yz,
+                          family_xy_z, rot_xy_z, par_xy_z) {
+  
+  bicop_xz <- bicop_dist(family_xz, rot_xz, par_xz)
+  bicop_yz <- bicop_dist(family_yz, rot_yz, par_yz)
+  bicop_xy_z <- bicop_dist(family_xy_z, rot_xy_z, par_xy_z)
+  
+  vine <- vinecop_dist(list(list(bicop_xz, bicop_yz), list(bicop_xy_z)), structure)
+  data <- rvinecop(n, vine)
+  
+  X <- data[, 1]; Y <- data[, 2]; Z <- data[, 3]
+  U_X <- hbicop(cbind(X, Z), cond_var = 2, bicop_xz)
+  U_Y <- hbicop(cbind(Y, Z), cond_var = 2, bicop_yz)
+  
+  data.frame(X = X, Y = Y, Z = Z, U_X = U_X, U_Y = U_Y)
+}
+
+# scenario configurations (1-10)
+configs <- list(
+  list(scen = 1, fam = "frank",   pars = list(c(1,1,1), c(3,3,1), c(5,5,1))),
+  list(scen = 1, fam = "gumbel",  pars = list(c(1.5,1.5,1.5), c(2,2,1.5), c(3,3,1.5))),
+  list(scen = 1, fam = "clayton", pars = list(c(1,1,1), c(3,3,1), c(5,5,1))),
+  
+  list(scen = 2, fam = "frank",   pars = list(c(1,1,NA), c(3,3,NA), c(5,5,NA)), cond_indep = TRUE),
+  list(scen = 2, fam = "gumbel",  pars = list(c(1.5,1.5,NA), c(2,2,NA), c(3,3,NA)), cond_indep = TRUE),
+  list(scen = 2, fam = "clayton", pars = list(c(1,1,NA), c(3,3,NA), c(5,5,NA)), cond_indep = TRUE),
+  
+  list(scen = 3, fam = "frank",      pars = list(c(-1,-1,NA), c(-3,-3,NA), c(-5,-5,NA)), cond_indep = TRUE),
+  list(scen = 3, fam = "gumbel_90",  pars = list(c(1.5,1.5,NA), c(2,2,NA), c(3,3,NA)), rot = 90, cond_indep = TRUE),
+  list(scen = 3, fam = "clayton_90", pars = list(c(1,1,NA), c(3,3,NA), c(5,5,NA)), rot = 90, cond_indep = TRUE),
+  
+  list(scen = 4, fam = "frank",    pars = list(c(1,-1,NA), c(3,-3,NA), c(5,-5,NA)), cond_indep = TRUE),
+  list(scen = 4, fam = "gaussian", pars = list(c(0.3,-0.3,NA), c(0.5,-0.5,NA), c(0.7,-0.7,NA)), cond_indep = TRUE),
+  
+  list(scen = 5, fam = "frank",    pars = list(c(1,1,-1), c(1,1,-3), c(1,1,-5))),
+  list(scen = 5, fam = "gaussian", pars = list(c(0.2,0.2,-0.2), c(0.2,0.2,-0.5), c(0.2,0.2,-0.7))),
+  list(scen = 5, fam = "frank",    pars = list(c(5,5,-1), c(5,5,-0.5)), trial = TRUE),
+  list(scen = 5, fam = "gaussian", pars = list(c(0.7,0.7,-0.2), c(0.7,0.7,-0.1)), trial = TRUE),
+  
+  list(scen = 6, fam = "frank",      pars = list(c(-1,-1,1), c(-3,-3,1), c(-5,-5,1))),
+  list(scen = 6, fam = "gumbel_90",  pars = list(c(1.5,1.5,1.5), c(2,2,1.5), c(3,3,1.5)), rot_xz = 90, rot_yz = 90),
+  list(scen = 6, fam = "clayton_90", pars = list(c(1,1,1), c(3,3,1), c(5,5,1)), rot_xz = 90, rot_yz = 90),
+  
+  list(scen = 7, fam = "frank",      pars = list(c(-1,-1,-1), c(-1,-1,-3), c(-1,-1,-5))),
+  list(scen = 7, fam = "gumbel_90",  pars = list(c(1.5,1.5,1.5), c(1.5,1.5,2), c(1.5,1.5,3)), rot = 90),
+  list(scen = 7, fam = "clayton_90", pars = list(c(1,1,1), c(1,1,3), c(1,1,5)), rot = 90),
+  
+  list(scen = 8, fam = "frank",    pars = list(c(1,-1,1), c(3,-3,1), c(5,-5,1))),
+  list(scen = 8, fam = "gaussian", pars = list(c(0.2,-0.2,0.2), c(0.5,-0.5,0.2), c(0.7,-0.7,0.2))),
+  
+  list(scen = 9, fam = "frank",    pars = list(c(1,-1,-1), c(3,-3,-1), c(5,-5,-1))),
+  list(scen = 9, fam = "gaussian", pars = list(c(0.2,-0.2,-0.2), c(0.5,-0.5,-0.2), c(0.7,-0.7,-0.2))),
+  
+  list(scen = 10, fam = "frank", pars = list(c(NA,NA,-1), c(NA,NA,1)), marginal_indep = TRUE),
+  list(scen = 10, fam = "indep", pars = list(c(NA,NA,NA)), marginal_indep = TRUE, cond_indep = TRUE)
+)
+
+# run all simulations (scenarios 1-10)
+all_data <- data.frame()
+results <- data.frame()
+case_counter <- list()
+
+for (cfg in configs) {
+  base_fam <- gsub("_90", "", cfg$fam)
+  rot <- if (!is.null(cfg$rot)) cfg$rot else 0
+  rot_xz <- if (!is.null(cfg$rot_xz)) cfg$rot_xz else rot
+  rot_yz <- if (!is.null(cfg$rot_yz)) cfg$rot_yz else rot
+  
+  for (i in seq_along(cfg$pars)) {
+    p <- cfg$pars[[i]]
+    
+    if (isTRUE(cfg$marginal_indep)) {
+      fam_xz <- "indep"; par_xz <- indep_par; r_xz <- 0
+      fam_yz <- "indep"; par_yz <- indep_par; r_yz <- 0
+    } else {
+      fam_xz <- base_fam; par_xz <- p[1]; r_xz <- rot_xz
+      fam_yz <- base_fam; par_yz <- p[2]; r_yz <- rot_yz
+    }
+    
+    if (isTRUE(cfg$cond_indep)) {
+      fam_xy_z <- "indep"; par_xy_z <- indep_par; r_xy_z <- 0
+    } else {
+      fam_xy_z <- base_fam; par_xy_z <- p[3]; r_xy_z <- rot
+    }
+    
+    df <- simulate_vine(fam_xz, r_xz, par_xz, fam_yz, r_yz, par_yz, fam_xy_z, r_xy_z, par_xy_z)
+    
+    scen_key <- as.character(cfg$scen)
+    if (is.null(case_counter[[scen_key]])) case_counter[[scen_key]] <- 0
+    case_counter[[scen_key]] <- case_counter[[scen_key]] + 1
+    case_letter <- letters[case_counter[[scen_key]]]
+    case_suffix <- if (isTRUE(cfg$trial)) "*" else ""
+    
+    display_fam <- paste0(toupper(substr(cfg$fam, 1, 1)), substr(cfg$fam, 2, nchar(cfg$fam)))
+    par_xz_str <- ifelse(is.na(p[1]), "ø", p[1])
+    par_yz_str <- ifelse(is.na(p[2]), "ø", p[2])
+    par_xy_z_str <- ifelse(isTRUE(cfg$cond_indep), "ø", p[3])
+    label <- sprintf("%s(%s,%s,%s)", display_fam, par_xz_str, par_yz_str, par_xy_z_str)
+    
+    rho_xy <- cor(df$X, df$Y, method = "spearman")
+    rho_uv <- cor(df$U_X, df$U_Y, method = "spearman")
+    tau_xy <- cor(df$X, df$Y, method = "kendall")
+    tau_uv <- cor(df$U_X, df$U_Y, method = "kendall")
+    
+    case_id <- paste0(scen_key, case_letter, case_suffix)
+    
+    df$Scenario <- cfg$scen
+    df$Case <- case_id
+    df$Label <- label
+    df$Case_Label <- paste0(case_id, ": ", label)
+    df$Family <- display_fam
+    df$rho_XY <- rho_xy
+    df$rho_UV <- rho_uv
+    df$tau_XY <- tau_xy
+    df$tau_UV <- tau_uv
+    
+    all_data <- rbind(all_data, df)
+    
+    results <- rbind(results, data.frame(
+      Scenario = cfg$scen,
+      Case = case_id,
+      Family = display_fam,
+      Parameters = label,
+      rho_XY = round(rho_xy, 3),
+      rho_UV = round(rho_uv, 3),
+      tau_XY = round(tau_xy, 3),
+      tau_UV = round(tau_uv, 3)
+    ))
+  }
+}
+
+# scenario 11: violation of the simplifying assumption
+simulate_nonsimplified <- function(par_func, family = "frank") {
+  bicop_xz <- bicop_dist("frank", 0, 1)
+  bicop_yz <- bicop_dist("frank", 0, 1)
+  
+  Z <- runif(n)
+  X <- Y <- U_X <- U_Y <- numeric(n)
+  
+  for (i in 1:n) {
+    param_z <- par_func(Z[i])
+    cond_cop <- bicop_dist(family, 0, param_z)
+    ST <- rbicop(1, cond_cop)
+    X[i] <- hbicop(c(ST[1,1], Z[i]), cond_var = 2, bicop_xz, inverse = TRUE)
+    Y[i] <- hbicop(c(ST[1,2], Z[i]), cond_var = 2, bicop_yz, inverse = TRUE)
+    U_X[i] <- hbicop(c(X[i], Z[i]), cond_var = 2, bicop_xz)
+    U_Y[i] <- hbicop(c(Y[i], Z[i]), cond_var = 2, bicop_yz)
+  }
+  
+  data.frame(X = X, Y = Y, Z = Z, U_X = U_X, U_Y = U_Y)
+}
+
+nonsimplified_configs <- list(
+  list(case = "11a", family = "frank",    par_func = function(z) exp(z),  label = "Frank(exp(z))"),
+  list(case = "11b", family = "frank",    par_func = function(z) -exp(z), label = "Frank(-exp(z))"),
+  list(case = "11c", family = "gaussian", par_func = function(z) 1 - 2*z, label = "Gaussian(1-2z)")
+)
+
+data_11 <- data.frame()
+results_11 <- data.frame()
+
+for (cfg in nonsimplified_configs) {
+  df <- simulate_nonsimplified(cfg$par_func, cfg$family)
+  
+  rho_xy <- cor(df$X, df$Y, method = "spearman")
+  rho_uv <- cor(df$U_X, df$U_Y, method = "spearman")
+  tau_xy <- cor(df$X, df$Y, method = "kendall")
+  tau_uv <- cor(df$U_X, df$U_Y, method = "kendall")
+  
+  df$Scenario <- 11
+  df$Case <- cfg$case
+  df$Label <- cfg$label
+  df$Case_Label <- paste0(cfg$case, ": ", cfg$label)
+  df$Family <- cfg$family
+  df$rho_XY <- rho_xy
+  df$rho_UV <- rho_uv
+  df$tau_XY <- tau_xy
+  df$tau_UV <- tau_uv
+  
+  data_11 <- rbind(data_11, df)
+  
+  results_11 <- rbind(results_11, data.frame(
+    Scenario = 11,
+    Case = cfg$case,
+    Family = cfg$family,
+    Parameters = cfg$label,
+    rho_XY = round(rho_xy, 3),
+    rho_UV = round(rho_uv, 3),
+    tau_XY = round(tau_xy, 3),
+    tau_UV = round(tau_uv, 3)
+  ))
+}
+
+# combine all data
+all_data <- rbind(all_data, data_11)
+results <- rbind(results, results_11)
+
+scenario_info <- data.frame(
+  Scenario = 1:11,
+  Title = c(
+    "Scenario 1: Positive Confounding, Positive Conditional (+,+,+)",
+    "Scenario 2: Positive Confounding, Conditional Independence (+,+,ø)",
+    "Scenario 3: Negative Confounding, Conditional Independence (-,-,ø)",
+    "Scenario 4: Opposite Confounding, Conditional Independence (+,-,ø)",
+    "Scenario 5: Positive Confounding, Negative Conditional (+,+,-)",
+    "Scenario 6: Negative Confounding, Positive Conditional (-,-,+)",
+    "Scenario 7: Negative Confounding, Negative Conditional (-,-,-)",
+    "Scenario 8: Opposite Confounding, Positive Conditional (+,-,+)",
+    "Scenario 9: Opposite Confounding, Negative Conditional (+,-,-)",
+    "Scenario 10: No Confounding (ø,ø,*)",
+    "Scenario 11: Simplifying Assumption Violated"
+  ),
+  Short = c("1: (+,+,+)", "2: (+,+,ø)", "3: (-,-,ø)", "4: (+,-,ø)", "5: (+,+,-)",
+            "6: (-,-,+)", "7: (-,-,-)", "8: (+,-,+)", "9: (+,-,-)", "10: (ø,ø,*)",
+            "11: Non-simplified")
+)
+
+```
+
+The theoretical results in Section 3 establish that the partial copula $C_{X,Y;Z}$ captures the dependence between $X$ and $Y$ after removing the effect of $Z$. In particular, Proposition 3.5 shows that the Pearson correlation induced by the partial copula equals the expected conditional correlation, while Proposition 3.2 establishes that the sign of quadrant dependence is preserved when it is constant across all conditional copulas. In this section, we conduct a simulation study to illustrate these results and to demonstrate how the partial copula can reveal the true conditional association structure when marginal correlations are confounded.
+
+## Design
+
+We employ a C-vine copula with $Z$ as the root node, which decomposes the joint distribution of $(X, Y, Z)$ through the pair copulas $C_{X,Z}$, $C_{Y,Z}$, and $C_{X,Y|Z}$. For each configuration, we generate a single sample of $n = 5000$ observations $(X_i, Y_i, Z_i)_{i=1}^{n}$ and compute the partial copula pseudo-observations via h-functions,
+$$U_{X,i} = h_2(X_i, Z_i; C_{X,Z}) \quad \text{and} \quad U_{Y,i} = h_2(Y_i, Z_i; C_{Y,Z}),$$
+where $h_2(u, v; C) = \partial C(u,v)/\partial v$ is the conditional distribution function of the first argument given the second.
+
+To assess how confounding and conditional dependence interact, we compare the marginal and partial rank correlations. Specifically, we compute Spearman's $\rho$ and Kendall's $\tau$ for both the original pair $(X, Y)$ and the partial copula pair $(U_X, U_Y)$. A discrepancy between these quantities indicates confounding: dependence between $X$ and $Y$ that is induced by $Z$ rather than by direct conditional association.
+
+We consider eleven scenarios, summarized in Table 1. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$ indicates the sign of dependence in each pair copula: $+$ for positive, $-$ for negative, and $\varnothing$ for independence. Scenarios 1--10 satisfy the simplifying assumption, so that $C_{X,Y|Z=z}$ does not vary with $z$ and Corollary 3.1 applies. Scenario 11 violates the simplifying assumption by letting the conditional copula parameter vary as a function of $Z$ through specifications $\theta(z) = \exp(z)$, $\theta(z) = -\exp(z)$, and $\theta(z) = 1 - 2z$; the last of these illustrates Remark 3.2, where positive and negative conditional associations cancel out in expectation.
+
+Within each scenario, we consider multiple copula families (Frank, Gumbel, Clayton, and Gaussian) across a range of parameter values to ensure robustness of the findings. Negative dependence for Gumbel and Clayton copulas is achieved via 90-degree rotation.
+
+\small
+| Scenario | Structure | Description |
+|:--------:|:---------:|:------------|
+| 1 | $(+,+,+)$ | Positive confounding, positive conditional |
+| 2 | $(+,+,\varnothing)$ | Positive confounding, conditional indep. |
+| 3 | $(-,-,\varnothing)$ | Negative confounding, conditional indep. |
+| 4 | $(+,-,\varnothing)$ | Opposite confounding, conditional indep. |
+| 5 | $(+,+,-)$ | Positive confounding, negative conditional |
+| 6 | $(-,-,+)$ | Negative confounding, positive conditional |
+| 7 | $(-,-,-)$ | Negative confounding, negative conditional |
+| 8 | $(+,-,+)$ | Opposite confounding, positive conditional |
+| 9 | $(+,-,-)$ | Opposite confounding, negative conditional |
+| 10 | $(\varnothing,\varnothing,\cdot)$ | No confounding |
+| 11 | --- | Simplifying assumption violated |
+
+Table: Summary of simulation scenarios. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$ denotes the sign of dependence in each pair copula: $+$ positive, $-$ negative, $\varnothing$ independence, and $\cdot$ varies across configurations.
+\normalsize
+
+## Results
+
+Figure 1 displays Spearman's $\rho$ and Kendall's $\tau$ for both the marginal pair $(X,Y)$ and the partial copula pair $(U_X, U_Y)$ across all scenarios. The results confirm the theoretical predictions. In conditional independence scenarios (2, 3, and 4), the partial correlations are negligible while marginal correlations can be substantial, demonstrating that the partial copula successfully removes confounding. In scenarios with both confounding and conditional dependence (1, 6, 7), the partial correlations correctly recover the conditional association, which is attenuated relative to the marginal correlations. Notably, scenarios 5 and 8 exhibit Simpson's paradox: marginal and partial correlations have opposite signs, illustrating how the partial copula can reveal conditional associations that are masked or reversed by confounding. Finally, Scenario 11 examines violations of the simplifying assumption. In cases 11a and 11b, where $\theta(z) = \exp(z)$ and $\theta(z) = -\exp(z)$ respectively, the sign of conditional dependence remains constant across all values of $Z$, and the partial correlations closely match the marginal correlations, consistent with Proposition 3.2. In contrast, case 11c, where $\theta(z) = 1 - 2z$, yields near-zero partial correlation despite conditional dependence for almost all values of $Z$, confirming Remark 3.2: opposing conditional associations cancel in expectation.
+
+```{r correlation-plot, echo=FALSE, fig.height=12, fig.width=12}
+# DUMBBELL PLOT
+results_dumbbell <- results %>%
+  pivot_longer(
+    cols = c(rho_XY, rho_UV, tau_XY, tau_UV),
+    names_to = "measure",
+    values_to = "value"
+  ) %>%
+  mutate(
+    Type = ifelse(grepl("UV", measure), "Partial", "Marginal"),
+    Coefficient = ifelse(grepl("rho", measure), "Spearman (ρ)", "Kendall (τ)")
+  ) %>%
+  pivot_wider(
+    id_cols = c(Scenario, Case, Family, Parameters, Coefficient),
+    names_from = Type, 
+    values_from = value
+  ) %>%
+  mutate(
+    Scenario_label = factor(
+      scenario_info$Short[match(Scenario, scenario_info$Scenario)],
+      levels = scenario_info$Short
+    ),
+    Case_Label = paste0(Case, ": ", Parameters)
+  )
+
+results_dumbbell <- results_dumbbell %>%
+  arrange(Scenario, Case) %>%
+  group_by(Scenario) %>%
+  mutate(Case_Label = factor(Case_Label, levels = rev(unique(Case_Label)))) %>%
+  ungroup()
+
+ggplot(results_dumbbell, aes(y = Case_Label)) +
+  geom_vline(xintercept = 0, linetype = "dashed", alpha = 0.5) +
+  geom_segment(aes(x = Marginal, xend = Partial, yend = Case_Label, linetype = Coefficient), 
+               color = "grey50", linewidth = 0.5) +
+  geom_point(aes(x = Marginal, color = "Marginal", shape = Coefficient), size = 2.5) +
+  geom_point(aes(x = Partial, color = "Partial", shape = Coefficient), size = 2.5) +
+  facet_wrap(~ Scenario_label, scales = "free_y", ncol = 2) +
+  scale_color_manual(values = c("Marginal" = "steelblue", "Partial" = "coral")) +
+  scale_shape_manual(values = c("Spearman (ρ)" = 16, "Kendall (τ)" = 17)) +
+  scale_linetype_manual(values = c("Spearman (ρ)" = "solid", "Kendall (τ)" = "dotted")) +
+  labs(
+    x = "Correlation", 
+    y = NULL, 
+    color = "Type",
+    shape = "Coefficient",
+    linetype = "Coefficient",
+    title = "Marginal vs Partial Correlations Across Scenarios"
+  ) +
+  theme_minimal(base_size = 9) +
+  theme(
+    strip.text = element_text(face = "bold"),
+    legend.position = "bottom",
+    legend.box = "horizontal",
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.y = element_text(size = 7)
+  ) +
+  guides(
+    color = guide_legend(order = 1),
+    shape = guide_legend(order = 2),
+    linetype = guide_legend(order = 2)
+  )
+
+```
+
+# Discussion
+
+\newpage{}
+
+# References
+
+<div id="refs"></div>
+
+\bibliography{refs.bib}
+
+\newpage{}
+
+# Appendix 
+
+```{r scatter-plots, echo=FALSE}
+# SCATTER PLOTS
+create_scenario_scatter <- function(data, scenario_num, scenario_title) {
+  
+  scen_data <- data %>% filter(Scenario == scenario_num)
+  
+  case_order <- scen_data %>%
+    distinct(Case, Case_Label) %>%
+    arrange(Case) %>%
+    pull(Case_Label)
+  
+  plot_data <- scen_data %>%
+    select(Case_Label, X, Y, U_X, U_Y, Z, rho_XY, rho_UV, tau_XY, tau_UV) %>%
+    pivot_longer(cols = c(X, U_X), names_to = "x_type", values_to = "x_val") %>%
+    pivot_longer(cols = c(Y, U_Y), names_to = "y_type", values_to = "y_val") %>%
+    filter((x_type == "X" & y_type == "Y") | (x_type == "U_X" & y_type == "U_Y")) %>%
+    mutate(
+      Type = ifelse(x_type == "X", "Marginal (X, Y)", "Partial (U_X, U_Y)"),
+      Type = factor(Type, levels = c("Marginal (X, Y)", "Partial (U_X, U_Y)")),
+      Case_Label = factor(Case_Label, levels = case_order)
+    )
+  
+  annot_data <- scen_data %>%
+    distinct(Case_Label, rho_XY, rho_UV, tau_XY, tau_UV) %>%
+    pivot_longer(
+      cols = c(rho_XY, rho_UV, tau_XY, tau_UV),
+      names_to = "measure",
+      values_to = "value"
+    ) %>%
+    mutate(
+      Type = ifelse(grepl("UV", measure), "Partial (U_X, U_Y)", "Marginal (X, Y)"),
+      Type = factor(Type, levels = c("Marginal (X, Y)", "Partial (U_X, U_Y)")),
+      Coef = ifelse(grepl("rho", measure), "rho", "tau"),
+      Case_Label = factor(Case_Label, levels = case_order)
+    ) %>%
+    pivot_wider(names_from = Coef, values_from = value) %>%
+    mutate(label = sprintf("ρ=%.2f, τ=%.2f", rho, tau))
+  
+  ggplot(plot_data, aes(x = x_val, y = y_val)) +
+    geom_point(aes(color = Z), alpha = 0.4, size = 0.6) +
+    geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "dashed", linewidth = 0.8) +
+    geom_text(data = annot_data, aes(x = 0.95, y = 0.05, label = label),
+              hjust = 1, vjust = 0, size = 2.5, color = "black") +
+    scale_color_viridis_c(option = "plasma", name = "Z") +
+    facet_grid(Case_Label ~ Type, scales = "fixed") +
+    labs(title = scenario_title, x = NULL, y = NULL) +
+    coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
+    theme_minimal(base_size = 9) +
+    theme(
+      strip.text = element_text(face = "bold", size = 8),
+      strip.text.y = element_text(angle = 0, hjust = 0),
+      legend.position = "right",
+      plot.title = element_text(face = "bold", size = 10, hjust = 0.5),
+      panel.grid.minor = element_blank()
+    )
+}
+
+# scatter plots for each scenario
+for (s in 1:11) {
+  title <- scenario_info$Title[scenario_info$Scenario == s]
+  p <- create_scenario_scatter(all_data, s, title)
+  print(p)
+}
+```

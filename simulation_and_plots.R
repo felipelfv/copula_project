@@ -334,7 +334,7 @@ ggplot(results_dumbbell, aes(y = Case_Label)) +
     color = "Type",
     shape = "Coefficient",
     linetype = "Coefficient",
-    title = "Marginal vs Partial Rank Correlations Across Scenarios"
+    title = "Marginal vs Partial Correlations Across Scenarios"
   ) +
   theme_minimal(base_size = 9) +
   theme(
