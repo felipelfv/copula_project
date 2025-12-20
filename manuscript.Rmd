@@ -140,7 +140,16 @@ where the third equality comes from applying substitution principle for conditio
 This application of Sklar's theorem is justified because $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is a cumulative distribution function for any $z \in \mathbb{R}$; Furthermore, $F_{X|Z}(X|z)$ and $F_{Y|Z}(Y|z)$ are, respectively, strictly increasing transformations of $x$ and $y$, because they are cumulative distribution functions for any $z \in \mathbb{R}$; then, from Theorem 2.4.3 in \citep{nelsen2006}, the conditional copula identified by Sklar's theorem in $P(F_{X|Z}(X|z) \leq x, F_{Y|Z}(Y|z) \leq y | Z = z)$ is the same as the conditional copula of $P(X \leq x, Y \leq y | Z = z)$. Therefore, the last equality is proved taking into account that the univariate conditional distributions are uniform in $[0,1]$.
 \end{proof}
 
-Proof of Proposition 3.1 ensures a formal justification to a similar expression that appears in proof of Proposition 1 in @gijbels2015.
+Proof of Proposition 3 ensures a formal justification to a similar expression that appears in proof of Proposition 1 in @gijbels2015.
+
+\begin{remark}
+A straightforward adaptation of the proof of Proposition 3 \citep[see also Equation 2.1 in][]{joe1996families} shows that, given a continuous random vector $(X,Y,Z)$,
+\begin{align*}
+P(X \leq x, Y \leq y) &= \int_{-\infty}^{\infty} P(X \leq x, Y \leq y | Z = z) f_Z(z) dz \\
+&= \int_{-\infty}^{\infty} C_{X,Y|Z=z}(F_{X|Z}(x|z), F_{Y|Z}(y|z)) f_Z(z) dz.
+\end{align*}
+Therefore, the partial copula can also be seen as the distribution of $(X,Y)$ under the assumption that each variable is independent of $Z$ but keeping the same conditional copulas as in the true distribution of $(X,Y,Z)$.
+\end{remark}
 
 An interesting consequence of the last proposition - summarized in the following corollary - is that, when the "simplifying assumption" [commonly used in Vine copula modeling, see @czado2022] is adopted, then the partial copula coincides with the conditional copula.
 
@@ -228,7 +237,7 @@ $$\max(-1, -3k) \leq \rho(X, Y; Z) \leq \min(1, 3k).$$
 \end{proposition}
 
 \begin{proof}
-The proof of Proposition 3.3 entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+The proof of Proposition 5 entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
 which entails that
 $$\int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy \in \left[\frac{1-k}{4}, \frac{1+k}{4}\right].$$
@@ -236,6 +245,29 @@ $$\int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy \in \left[\frac{1-k}{4}, \frac{1+k}{4}
 Theorem 5.1.6 in \citet{nelsen2006} states that, given a copula $C$, its Pearson's correlation can be represented as $12 \int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy - 3$. Applying this representation in the partial copula, it holds that
 $$-3k \leq \rho(X, Y; Z) \leq 3k,$$
 as we wished to prove. The final bound in the proposition is obtained taking into account that Pearson's coefficient belongs to $[-1, 1]$ range \citep[see Theorem 5.1.9 in][]{nelsen2006}.
+\end{proof}
+
+An even better bound can be obtained for the Kendall's tau correlation coefficient (denoted by $\tau$), which is also a functional of the copula [@nelsen2006] - see next Proposition.
+
+\begin{proposition}
+Let $X, Y, Z$ be jointly continuous random variables. If $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+$$\max(-1, -2k) \leq \tau(X, Y; Z) \leq \min(1, 2k).$$
+\end{proposition}
+
+\begin{proof}
+We have saw in the proof of Proposition 5 that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+$$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4}.$$
+Therefore, inserting $U_X$ and $U_Y$ as arguments, we have
+$$U_X U_Y - \frac{k}{4} \leq C_{X,Y;Z}(U_X, U_Y) \leq U_X U_Y + \frac{k}{4}.$$
+The monotonicity of expectation \citep[property E2 of section 3.3 of][]{james1981} entails that
+$$E[U_X U_Y] - \frac{k}{4} \leq E[C_{X,Y;Z}(U_X, U_Y)] \leq E[U_X U_Y] + \frac{k}{4}.$$
+The Equation 5.1.15b from Theorem 5.1.6 in \citet{nelsen2006} entails that $\rho(X,Y;Z) = 12 E[U_X U_Y] -3$, which means that
+$$\frac{\rho(X,Y;Z) + 3}{12} - \frac{k}{4} \leq E[C_{X,Y;Z}(U_X, U_Y)] \leq \frac{\rho(X,Y;Z) + 3}{12} + \frac{k}{4}.$$
+The final argument comes from remembering that, according to Theorem 5.1.3 in \citet{nelsen2006}, Kendall's tau correlation coefficient can be represented as $4E[C_{X,Y;Z}(U_X, U_Y)] - 1$, which leads us to the conclusion that
+$$\frac{\rho(X,Y;Z) + 3}{3} - k -1 \leq \tau(X, Y; Z) \leq \frac{\rho(X,Y;Z) + 3}{3} + k -1,$$
+and, from the inequality $-3k \leq \rho(X, Y; Z) \leq 3k,$ it follows that
+$$-2k \leq \tau(X, Y; Z) \leq 2k.$$
+As in the previous osu proof, the final bounds are obtained using the fact that Kendall's coefficient belongs to the $[-1, 1]$ range \citep[see Theorem 5.1.9 in][]{nelsen2006}.
 \end{proof}
 
 Additionally, the connection between the correlation in the conditional copulas and in the partial copula can be summarized in the following theorem.
@@ -611,6 +643,16 @@ ggplot(results_dumbbell, aes(y = Case_Label)) +
 ```
 
 # Discussion
+
+In this paper, we discussed the notion of partial copula, originally introduced in @bergsma2004 to test conditional independence. This test was introduced upon the observation that, under conditional independence, the variables $F_{X|Z}(X|Z)$ and $F_{Y|Z}(Y|Z)$, usually known as Rosenblatt transformations, are independent. Although we recognize the usefulness of the partial copula as a tool to test conditional independence, our main focus has been to highlight its broader applicability as a general representation of conditional association, which has not been well explored previously in the literature, to the best of our knowledge. The starting point from this paper is the observation that the variables $F_{X|Z}(X|Z)$ and $F_{Y|Z}(Y|Z)$ are uniformly distributed in $[0,1]$, which means that their joint cumulative distribution function is a copula, which enables studying the several dependence concepts constructed in the copula literature, such as Spearman's and Kendall's coefficients.
+
+First, we showed in Proposition 3 and Remark 2 that the partial copula of $(X,Y)$ adjusted by $Z$ may be seen viewed as the joint distribution of $(X,Y)$ under the assumption that $X$ and $Y$ are both independent of $Z$ (marginally) but preserving their conditional copula. This interpretation clarifies the role of the partial copula as a general representation of conditional association, since it captures the dependence between $X$ and $Y$ after removing the effect of $Z$. Second, we established several properties of the partial copula, including bounds for Spearman's and Kendall's coefficients in the partial copula when the maximum value of the Kolmogorov distance dependence in the conditional copulas is known (Propositions 6 and 7), the connection between conditional and partial correlations (Proposition 8), and a characterization of the partial copula when the conditional copulas belongs to a specific parametric family (Proposition 9). In an intuitive level, those results show that the partial copula captures the properties of conditional copulas while removing the effect of $Z$.
+
+In the context of causal inference, if $Z$ is a confounding variable, the dependence between $X$ and $Y$ adjusted by $Z$ - as traditionally estimated in linear models and other statistical techniques - may be interpreted as the true causal connection between the two variables. The properties proved in this paper underscores the capability of the partial copula to capture this causal connection and without requiring restrictive assumptions such as linearity or the simplifying assumption used in vine copula modeling.
+
+Finally, a simulation study was conduced to compare how the partial and the marginal copulas may be different. In scenarios presenting conditional independence (scenarios 2, 3 and 4), the partial copula is the independence copula, while the marginal copula contains the spurious association induced by $Z$. In scenarios where $Z$ is both positively associated to $X$ and $Y$ or both negatively associated to them (1,5,6,7), the association observed in the marginal copula was stronger, while in the scnearios with "opposite confounding" (8 and 9) the partial copula shows stronger dependence. In scenarios with no confounding (10), the marginal and the partial copula are the same. Finally, scenario 11 illustrated cases violating simplifying assumption, which shows a fundamental difference between partial and conditional copulas: conditional copulas depend on the specification of the value being conditioned in the variable $Z$, while the partial copula does not. In this sense, the partial copula may be seen as a "summary" of the conditional copulas across all values of $Z$.
+
+The diversity of scenarios simulated shows that, in several contexts, the marginal association and the average conditional association may be very different - including scenarios known as Simpson's paradox, where even the signs of correlation coefficients are different. In causal inference literature [@pearl2009; @pearl2016], it is well known that marginal associations may be very different from causal effects due to confounding. The results in this paper show that the partial copula is a useful tool to estimate the average conditional association, which may be interpreted as a causal effect under standard assumptions in causal inference. From this paper, we hope to have showed both the importance of using conditional association instead of marginal association in several contexts, and the capability of the partial copula to capture this conditional association in a general way.
 
 \newpage
 
