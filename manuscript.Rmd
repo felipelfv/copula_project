@@ -63,7 +63,7 @@ The paper is organized as follows. Next section provides all the necessary backg
 
 Copulas are multivariate functions $[0,1]^d \to [0,1]$ used to describe the dependence structure of random vectors of dimension $d \in \mathbb{N}$. The definition in the bivariate case is presented below.
 
-\begin{definition}
+\begin{definition}\label{def:2copula}
 A 2-copula is a function $C: [0,1]^2 \to [0,1]$ with the following properties:
 
 (i) $C(u,0) = C(0,v) = 0$, and $C(u,1) = u$, $C(1,v) = v$, $\forall u,v: u,v \in [0,1]$;
@@ -72,13 +72,13 @@ A 2-copula is a function $C: [0,1]^2 \to [0,1]$ with the following properties:
 $$C(u_2, v_2) - C(u_2, v_1) - C(u_1, v_2) + C(u_1, v_1) \geq 0.$$
 \end{definition}
 
-Note that Definition 2.1 is equivalent to the definition of 2-variate cumulative distribution function (CDF) whose marginal distributions are uniform in $[0,1]$ range. Therefore, given two any random variables $U, V$ such that $U \sim U(0,1)$ and $V \sim U(0,1)$, the cumulative distribution function $P(U \leq u, V \leq v)$ is necessarily a copula (because it satisfies Definition 2.1).
+Note that Definition \ref{def:2copula} is equivalent to the definition of 2-variate cumulative distribution function (CDF) whose marginal distributions are uniform in $[0,1]$ range. Therefore, given two any random variables $U, V$ such that $U \sim U(0,1)$ and $V \sim U(0,1)$, the cumulative distribution function $P(U \leq u, V \leq v)$ is necessarily a copula (because it satisfies Definition \ref{def:2copula}).
 
 Sklar's theorem [@sklar1959; @nelsen2006] guarantees that, given two any random variables $X$ and $Y$, it holds that
 $$P(X \leq x, Y \leq y) = C(F_X(x), F_Y(y)),$$
 where $F_X$ and $F_Y$ are, respectively, the cumulative distribution functions of $X$ and $Y$, and $C$ is a copula - if the variables are continuous, then $C$ is unique and it may be called "the copula of $(X,Y)$". It's possible to note that the copula of $(X,Y)$ is the CDF of $(F_X(X), F_Y(Y))$.
 
-The representation provided by Sklar's theorem shows that copulas are a ``marginal-free'' way to study the dependence between two (or more) random variables, which makes clear that this is a central notion in the study of stochastic dependence. For further arguments regarding the importance of copula theory in the study of stochastic dependence, see @embrechts2002 and see also the monographs from @nelsen2006 and @joe2014.
+The representation provided by Sklar's theorem shows that copulas are a "marginal-free" way to study the dependence between two (or more) random variables, which makes clear that this is a central notion in the study of stochastic dependence. For further arguments regarding the importance of copula theory in the study of stochastic dependence, see @embrechts2002 and see also the monographs from @nelsen2006 and @joe2014.
 
 ## Probability integral transform
 
@@ -92,7 +92,7 @@ Let $F$ be an absolutely continuous cumulative distribution function, and let $F
 \end{itemize}
 \end{proposition}
 
-An even more general result is available in @rosenblatt1952: @rosenblatt1952 proved that, given a sequence of random variables $X_1, \ldots, X_n$, the random variables
+An even more general result is available in @rosenblatt1952: given a sequence of random variables $X_1, \ldots, X_n$, the random variables
 $$F_1(X_1), \, F_{X_2|X_1}(X_2|X_1), \, \ldots, \, F_{X_n|X_1,\ldots,X_{n-1}}(X_n|X_1, \ldots, X_{n-1})$$
 are independent and uniformly distributed in the $[0,1]$ range.
 
@@ -100,7 +100,7 @@ are independent and uniformly distributed in the $[0,1]$ range.
 Let $(X, Y, Z)$ be an absolutely continuous random vector. Therefore, $X \independent Y | Z$ if and only if $F_{X|Z}(X|Z)$, $F_{Y|Z}(Y|Z)$ and $Z$ are mutually independent.
 \end{proposition}
 
-This result suggests that studying the joint distribution of $F_{X|Z}(X|Z)$ and $F_{Y|Z}(Y|Z)$ is a natural way to study the dependence between $X$ and $Y$ adjusted by $Z$, because those two quantities would be independent in the particular case that they are conditionally independent given $Z$ (therefore, this joint distribution would remove the ``spurious association'' induced by $Z$). In the context of causal inference, if $Z$ is the confounder of $(X,Y)$, the two variables would be conditionally independent given $Z$, provided they are causally unrelated (see considerations about fork models in [@pearl2009; @pearl2016].
+This result suggests that studying the joint distribution of $F_{X|Z}(X|Z)$ and $F_{Y|Z}(Y|Z)$ is a natural way to study the dependence between $X$ and $Y$ adjusted by $Z$, because those two quantities would be independent in the particular case that they are conditionally independent given $Z$ (therefore, this joint distribution would remove the "spurious association" induced by $Z$). In the context of causal inference, if $Z$ is the confounder of $(X,Y)$, the two variables would be conditionally independent given $Z$, provided they are causally unrelated (see considerations about fork models in [@pearl2009; @pearl2016].
 
 # The partial copula
 
@@ -112,15 +112,15 @@ $$C_{X,Y;Z}(x, y) = P(\UX \leq x, \UY \leq y),$$
 where $\UX = F_{X|Z}(X|Z)$ and $\UY = F_{Y|Z}(Y|Z)$.
 \end{definition}
 
-\begin{remark}
-Note that $C_{X,Y;Z}$ fully satisfies the definition of copula (Definition 2.1), because $C_{X,Y;Z}$ is the cumulative distribution function of two random variables uniformly distributed in $[0,1]$.
+\begin{remark}\label{rem:remark-2}
+Note that $C_{X,Y;Z}$ fully satisfies the definition of copula (Definition \ref{def:2copula}), because $C_{X,Y;Z}$ is the cumulative distribution function of two random variables uniformly distributed in $[0,1]$.
 \end{remark}
 
 The partial copula $C_{X,Y;Z}$ may be seen - in a similar way to partial correlation - as a notion that represents the stochastic dependence between $(X, Y)$ after removing the effect of a covariate $Z$. Further, differently from the notion of conditional copula, $C_{X,Y;Z}$ does not depend on the specification of a specific value $z$ of $Z$.
 
 Next result shows that the partial copula $C_{X,Y;Z}$ can be written as a mixture of all conditional copulas $C_{X,Y|Z=z}$; this result, in addition to providing an analytic representation for the partial copula, highlights the capability of the concept in capturing conditional dependence.
 
-\begin{proposition}
+\begin{proposition}\label{prop:partial-copula}
 Let $(X, Y, Z)$ be a continuous random vector. The partial copula $C_{X,Y;Z}$ can be written as
 $$C_{X,Y;Z}(x, y) = \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz,$$
 where $C_{X,Y|Z=z}$ is the conditional copula of $(X, Y)$ given $Z = z$.
@@ -153,7 +153,7 @@ Therefore, the partial copula can also be seen as the distribution of $(X,Y)$ un
 
 An interesting consequence of the last proposition - summarized in the following corollary - is that, when the "simplifying assumption" [commonly used in Vine copula modeling, see @czado2022] is adopted, then the partial copula coincides with the conditional copula.
 
-\begin{corollary}
+\begin{corollary}\label{cor:partial-conditional-copula}
 Let $(X, Y, Z)$ be a continuous random vector. If the conditional copula of $(X, Y)$ given $Z = z$ is constant as a function of $z$ ("simplifying assumption"), then
 $$C_{X,Y;Z}(x, y) = C_{X,Y|Z}(x, y).$$
 \end{corollary}
@@ -170,10 +170,10 @@ C_{X,Y;Z}(x, y) &= \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz \\
 
 From this result, it also becomes clear that when $(X, Y)$ are conditionally independent given $Z$ (which produces the conditional copula $C_{X,Y|Z=z}(x, y) = xy$), then the partial copula is the independence copula, which is coherent with lemma 3.1 of @patra2016. However, the reciprocal statement is not true - see next remark.
 
-\begin{remark}
-Corollary 3.1 entails that, if $X \independent Y | Z$, then $C_{X,Y;Z}(x, y) = xy$ (or, equivalently, $\UX$ and $\UY$ are independent).
+\begin{remark}\label{rem:partial-copula-necessary-not-sufficient}
+Corollary \ref{cor:partial-conditional-copula} entails that, if $X \independent Y | Z$, then $C_{X,Y;Z}(x, y) = xy$ (or, equivalently, $\UX$ and $\UY$ are independent).
 
-On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts \citep{nelsen2012, gonzalezlopez2024}}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition 3.1,
+On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts \citep{nelsen2012, gonzalezlopez2024}}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition \ref{def:partial-copula},
 $$C_{X,Y;Z}(x, y) = \int_0^1 [xy + (1-2z)xy(1-x)(1-y)] dz = xy,$$
 which is the independence copula, which entails, from the definition of the partial copula, that $\UX$ and $\UY$ are independent. However, except for $Z = 0.5$, $X$ and $Y$ are not conditionally independent given $Z = z$.
 
@@ -181,14 +181,14 @@ Therefore, $\UX \independent \UY$ is a necessary but not sufficient condition fo
 \end{remark}
 
 \begin{remark}
-Let $g(x, y, z) = C_{X,Y|Z=z}(x, y)$. $g(x, y, Z)$ is a random variable, and Proposition 3.1 entails that
+Let $g(x, y, z) = C_{X,Y|Z=z}(x, y)$. $g(x, y, Z)$ is a random variable, and Proposition \ref{def:partial-copula} entails that
 $$C_{X,Y;Z}(x, y) = E[g(x, y, Z)],$$
 which means that the partial copula is the expected conditional copula.
 \end{remark}
 
 Given the functional relationship between the partial and the conditional copulas, an interesting research line that emerges is studying in what extent properties of the conditional copulas constrain the properties of the partial copula. A first result on this matter is given by next proposition. The result is based on the notions of quadrant positive and quadrant negative dependence: a copula $C$ is said to have quadrant positive dependence (QPD) if $C(u, v) \geq uv$ for all $(u, v) \in [0,1]^2$. In an analogous way, the copula has quadrant negative dependence (QND) if $C(u, v) \leq uv$ for all $(u, v) \in [0,1]^2$ [@joe2014]. A direct consequence of the fact that the partial copula is an expected conditional copula is given by the following proposition.
 
-\begin{proposition}
+\begin{proposition}\label{prop:quadrant-dependence}
 Let $(X, Y, Z)$ be a continuous random vector. If the conditional copula of $(X, Y)$ given $Z = z$ has positive quadrant dependence for all $z \in \mathbb{R}$, then the partial copula $C_{X,Y;Z}(x, y)$ has positive quadrant dependence.
 
 In the same way, if the conditional copula of $(X, Y)$ given $Z = z$ has negative quadrant dependence for all $z \in \mathbb{R}$, then the partial copula $C_{X,Y;Z}(x, y)$ has negative quadrant dependence.
@@ -200,7 +200,7 @@ $$xy \leq E[g(x, y, Z)] = C_{X,Y;Z}(x, y).$$
 Therefore, $C_{X,Y;Z}(x, y) \geq xy$, as we wished to prove. The same argument holds for negative quadrant dependence.
 \end{proof}
 
-An intuitive interpretation for Proposition 3.2 is that, whenever the conditional association between $X$ and $Y$ is positive [negative] for all values of $Z$, the partial copula also exhibits positive [negative] dependence.
+An intuitive interpretation for Proposition \ref{prop:quadrant-dependence} is that, whenever the conditional association between $X$ and $Y$ is positive [negative] for all values of $Z$, the partial copula also exhibits positive [negative] dependence.
 
 Next proposition uses a dependence measure based on Kolmogorov distance, which, for simplicity, we will call it as Kolmogorov distance dependence (KDD). This coefficient was introduced in @wolff1977 and @schweizer1981, and is defined as
 $$D(X, Y) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y}(x, y) - xy|).$$
@@ -210,7 +210,7 @@ This happens intuitively because dependence and concordance measures have two di
 deviation from indepenendence, and the last ones measures the degree os monothonic association [see @nelsen2006; @joe2014].]. The following proposition shows how the value of KDD in the conditional copulas
 constrains the value of KDD in the partial copula.
 
-\begin{proposition}
+\begin{proposition}\label{prop:partial-copula-independence}
 Let $X, Y, Z$ be jointly continuous random variables. Then,
 $$D(\UX, \UY) \leq \sup_{z \in \mathbb{R}} (D(X, Y | Z = z)).$$
 \end{proposition}
@@ -221,7 +221,7 @@ $$k \geq D(X, Y | Z = z) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y|Z=z}(x, y) - xy|),$$
 which entails that $|C_{X,Y|Z=z}(x, y) - xy| \leq k/4$ for every $x, y \in [0, 1]$, $z \in \mathbb{R}$. Therefore,
 $$C_{X,Y|Z=z}(x, y) \in \left[xy - \frac{k}{4}, xy + \frac{k}{4}\right].$$
 
-The remainder of the proof comes from remembering that the partial copula evaluated in a point $(x, y) \in [0, 1]^2$ is the expectation of a random variable (see Remark 3.3), which enables using the monotonicity of expectation: property E2 of section 3.3 of \citet{james1981} readily entails that, if a random variable belongs almost surely to an interval, then the same happens to its expectation. Therefore,
+The remainder of the proof comes from remembering that the partial copula evaluated in a point $(x, y) \in [0, 1]^2$ is the expectation of a random variable (see Remark \ref{rem:partial-copula-necessary-not-sufficient}), which enables using the monotonicity of expectation: property E2 of section 3.3 of \citet{james1981} readily entails that, if a random variable belongs almost surely to an interval, then the same happens to its expectation. Therefore,
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
 for every $x, y \in [0, 1]$. Therefore, $|C_{X,Y;Z}(x, y) - xy| \leq k/4$, which entails that
 $$D(\UX, \UY) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y}(x, y) - xy|) \leq k.$$
@@ -231,13 +231,13 @@ The last result can be intuitively interpreted in the following way: regardless 
 
 Furthermore, it is possible to also bound Pearson's correlation coefficient (here denoted by letter $\rho$) in the partial copula, provided an upper bound for the KDD of the conditional copulas is also known (it is worth remembering that Pearson's correlation is also a functional of the copula, see @fredricks2007).
 
-\begin{proposition}
+\begin{proposition}\label{def:pearson-bounds}
 Let $X, Y, Z$ be jointly continuous random variables. If $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
 $$\max(-1, -3k) \leq \rho(X, Y; Z) \leq \min(1, 3k).$$
 \end{proposition}
 
 \begin{proof}
-The proof of Proposition 5 entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+The proof of Proposition \ref{def:pearson-bounds} entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
 which entails that
 $$\int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy \in \left[\frac{1-k}{4}, \frac{1+k}{4}\right].$$
@@ -255,7 +255,7 @@ $$\max(-1, -2k) \leq \tau(X, Y; Z) \leq \min(1, 2k).$$
 \end{proposition}
 
 \begin{proof}
-We have saw in the proof of Proposition 5 that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+We have seen in the proof of Proposition \ref{def:pearson-bounds} that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4}.$$
 Therefore, inserting $U_X$ and $U_Y$ as arguments, we have
 $$U_X U_Y - \frac{k}{4} \leq C_{X,Y;Z}(U_X, U_Y) \leq U_X U_Y + \frac{k}{4}.$$
@@ -280,7 +280,7 @@ $$\rho(X, Y; Z) = \int_{-\infty}^{\infty} \rho(X, Y | Z = z) f_Z(z) dz.$$
 \begin{proof}
 Applying Equation 5.1.15c of \citet{nelsen2006} in the partial copula, we obtain
 $$\rho(X, Y; Z) = 12 \int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy - 3.$$
-Now using representation from Proposition 3.1, we obtain
+Now using representation from Proposition \ref{prop:partial-copula}, we obtain
 \begin{align*}
 \rho(X, Y; Z) &= 12 \int_0^1 \int_0^1 \int_{-\infty}^{\infty} C_{X,Y|Z=z}(x, y) f_Z(z) dz dx dy - 3 \\
 &= 12 \int_{-\infty}^{\infty} \left(\int_0^1 \int_0^1 C_{X,Y|Z=z}(x, y) dx dy \right) f_Z(z) dz - 3 \\
@@ -302,7 +302,7 @@ where $\theta = \int_{-\infty}^{\infty} h(z) f_Z(z) dz$.
 \end{proposition}
 
 \begin{proof}
-This result is a direct consequence of applying Proposition 3.1 in the conditional copulas $C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y)$.
+This result is a direct consequence of applying Proposition \ref{prop:partial-copula} in the conditional copulas $C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y)$.
 \end{proof}
 
 The family introduced in @rodriguezlallena2004 encompasses the Farlie-Gumbel-Morgenstern Copula, and, for this reason, can be considered a disturbance of independence condition. @komelj2010 showed that all copulas on this family have Spearman's correlation coefficient belonging to $[-3/4, 3/4]$, and @garcia2016 proved that the copulas of @rodriguezlallena2004 maximize a certain type of entropy. In this sense, the last proposition gives an additional support into the insight that, when all the conditional copulas are close to the independence, then the partial copula is also close to independence.
@@ -539,7 +539,7 @@ scenario_info <- data.frame(
 
 ```
 
-The theoretical results in Section 3 establish that the partial copula $C_{X,Y;Z}$ captures the dependence between $X$ and $Y$ after removing the effect of $Z$. In particular, Proposition 3.5 shows that the Pearson correlation induced by the partial copula equals the expected conditional correlation, while Proposition 3.2 establishes that the sign of quadrant dependence is preserved when it is constant across all conditional copulas. In this section, we conduct a simulation study to illustrate these results and to demonstrate how the partial copula can reveal the true conditional association structure when marginal correlations are confounded.
+The theoretical results in Section 3 establish that the partial copula $C_{X,Y;Z}$ captures the dependence between $X$ and $Y$ after removing the effect of $Z$. In particular, Proposition \ref{prop:partial-copula-independence} shows that the Pearson correlation induced by the partial copula equals the expected conditional correlation, while Proposition \ref{prop:quadrant-dependence} establishes that the sign of quadrant dependence is preserved when it is constant across all conditional copulas. In this section, we conduct a simulation study to illustrate these results and to demonstrate how the partial copula can reveal the true conditional association structure when marginal correlations are confounded.
 
 ## Design
 
@@ -549,7 +549,7 @@ where $h_2(u, v; C) = \partial C(u,v)/\partial v$ is the conditional distributio
 
 To assess how confounding and conditional dependence interact, we compare the marginal and partial rank correlations. Specifically, we compute Spearman's $\rho$ and Kendall's $\tau$ for both the original pair $(X, Y)$ and the partial copula pair $(U_X, U_Y)$. A discrepancy between these quantities indicates confounding: dependence between $X$ and $Y$ that is induced by $Z$ rather than by direct conditional association.
 
-We consider eleven scenarios, summarized in Table 1. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$ indicates the sign of dependence in each pair copula: $+$ for positive, $-$ for negative, and $\varnothing$ for independence. Scenarios 1--10 satisfy the simplifying assumption, so that $C_{X,Y|Z=z}$ does not vary with $z$ and Corollary 3.1 applies. Scenario 11 violates the simplifying assumption by letting the conditional copula parameter vary as a function of $Z$ through specifications $\theta(z) = \exp(z)$, $\theta(z) = -\exp(z)$, and $\theta(z) = 1 - 2z$; the last of these illustrates Remark 3.2, where positive and negative conditional associations cancel out in expectation.
+We consider eleven scenarios, summarized in Table 1. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$ indicates the sign of dependence in each pair copula: $+$ for positive, $-$ for negative, and $\varnothing$ for independence. Scenarios 1--10 satisfy the simplifying assumption, so that $C_{X,Y|Z=z}$ does not vary with $z$ and Corollary \ref{cor:partial-conditional-copula} applies. Scenario 11 violates the simplifying assumption by letting the conditional copula parameter vary as a function of $Z$ through specifications $\theta(z) = \exp(z)$, $\theta(z) = -\exp(z)$, and $\theta(z) = 1 - 2z$; the last of these illustrates Remark \ref{rem:remark-2}, where positive and negative conditional associations cancel out in expectation.
 
 Within each scenario, we consider multiple copula families (Frank, Gumbel, Clayton, and Gaussian) across a range of parameter values to ensure robustness of the findings. Negative dependence for Gumbel and Clayton copulas is achieved via 90-degree rotation.
 
@@ -575,7 +575,7 @@ Table: Summary of simulation scenarios. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$
 
 ## Results
 
-Figure 1 displays Spearman's $\rho$ and Kendall's $\tau$ for both the marginal pair $(X,Y)$ and the partial copula pair $(U_X, U_Y)$ across all scenarios. The results confirm the theoretical predictions. In conditional independence scenarios (2, 3, and 4), the partial correlations are negligible while marginal correlations can be substantial, demonstrating that the partial copula successfully removes confounding. In scenarios with both confounding and conditional dependence (1, 6, 7), the partial correlations correctly recover the conditional association, which is attenuated relative to the marginal correlations. Notably, scenarios 5 and 8 exhibit Simpson's paradox: marginal and partial correlations have opposite signs, illustrating how the partial copula can reveal conditional associations that are masked or reversed by confounding. Finally, Scenario 11 examines violations of the simplifying assumption. In cases 11a and 11b, where $\theta(z) = \exp(z)$ and $\theta(z) = -\exp(z)$ respectively, the sign of conditional dependence remains constant across all values of $Z$, and the partial correlations closely match the marginal correlations, consistent with Proposition 3.2. In contrast, case 11c, where $\theta(z) = 1 - 2z$, yields near-zero partial correlation despite conditional dependence for almost all values of $Z$, confirming Remark 3.2: opposing conditional associations cancel in expectation.
+Figure 1 displays Spearman's $\rho$ and Kendall's $\tau$ for both the marginal pair $(X,Y)$ and the partial copula pair $(U_X, U_Y)$ across all scenarios. The results confirm the theoretical predictions. In conditional independence scenarios (2, 3, and 4), the partial correlations are negligible while marginal correlations can be substantial, demonstrating that the partial copula successfully removes confounding. In scenarios with both confounding and conditional dependence (1, 6, 7), the partial correlations correctly recover the conditional association, which is attenuated relative to the marginal correlations. Notably, scenarios 5 and 8 exhibit Simpson's paradox: marginal and partial correlations have opposite signs, illustrating how the partial copula can reveal conditional associations that are masked or reversed by confounding. Finally, Scenario 11 examines violations of the simplifying assumption. In cases 11a and 11b, where $\theta(z) = \exp(z)$ and $\theta(z) = -\exp(z)$ respectively, the sign of conditional dependence remains constant across all values of $Z$, and the partial correlations closely match the marginal correlations, consistent with Proposition \ref{prop:quadrant-dependence}. In contrast, case 11c, where $\theta(z) = 1 - 2z$, yields near-zero partial correlation despite conditional dependence for almost all values of $Z$, confirming Remark \ref{rem:remark-2}: opposing conditional associations cancel in expectation.
 
 ```{r correlation-plot, echo=FALSE, fig.height=12, fig.width=12, fig.cap="Marginal vs Partial Correlations Across Scenarios"}
 # DUMBBELL PLOT
