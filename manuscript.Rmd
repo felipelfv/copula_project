@@ -47,7 +47,7 @@ n <- 5000
 
 # Introduction
 
-Quantifying the strength of the statistical association between two random variables, controlled by one or more variables (usually called covariates or control variables), is an old problem in statistics and widely discussed in the context of linear models and regression coefficients [@kutner2005; @baba2004; @kim2015]. It is well established in the statistical literature that, under wide conditions, conditionally independent random variables are unconditionally correlated\footnote{In fact, latent variables ensuring conditional independence are a common tool in statistics to "create" or "explain" dependence between variables - see, for instance, factor models \citep{joe2014, Bork2017, Nguyen2020} and de Finetti's representation theorem [@oneill2009].} [see theorem 2 in @oneill2009] - therefore, in the context of causal models, two variables causally unrelated may be correlated if they are both affected by a third variable, called confounder [@pearl2009; @pearl2016]. For this reason, the analysis of conditional and partial associations is of great importance in statistical analysis of observational data; in the context of regression analysis, this is done adding control variables [@kutner2005], and, in the context of correlation analysis, this is done through partial correlation [@baba2004; @kim2015]. A brief introduction on how to choose control variables properly (from a causal viewpoint) is presented in @cinelli2022.
+Quantifying the strength of the statistical association between two random variables, controlled by one or more variables (usually called covariates or control variables), is an old problem in statistics and widely discussed in the context of linear models and regression coefficients [@kutner2005; @baba2004; @kim2015]. It is well established in the statistical literature that, under wide conditions, conditionally independent random variables are unconditionally correlated\footnote{In fact, latent variables ensuring conditional independence are a common tool in statistics to "create" or "explain" dependence between variables - see, for instance, factor models \citep{joe2014, Bork2017, Nguyen2020} and de Finetti's representation theorem \citep{oneill2009}.} [see theorem 2 in @oneill2009] - therefore, in the context of causal models, two variables causally unrelated may be correlated if they are both affected by a third variable, called confounder [@pearl2009; @pearl2016]. For this reason, the analysis of conditional and partial associations is of great importance in statistical analysis of observational data; in the context of regression analysis, this is done adding control variables [@kutner2005], and, in the context of correlation analysis, this is done through partial correlation [@baba2004; @kim2015]. A brief introduction on how to choose control variables properly (from a causal viewpoint) is presented in @cinelli2022.
 
 In the same way that using a single numerical index (such as the expectation) is not as informative as knowing the distribution of a variable, it is also true that correlation coefficients fail in capturing several aspects of the dependence structure of a random vector - for this reason, copula theory offers a much richer way to study statistical dependence^[@embrechts2002 presents an example of two bivariate distributions share same marginal distributions and same Pearson's correlation value, but the tail dependence is not the same because the copulas are not the same. This exemplifies the limitation of using Pearson's correlation coefficient to summarise the dependence structure.]. Copulas are functions such that, given the copula and the univariate (marginal) distributions of a random vector, the joint distribution of the variables is fully characterized - therefore, they fully characterize the dependence structure behind a random vector [@nelsen2006; @joe2014]. In fact, it has been proved that copulas offer sufficient and necessary conditions for independence [Theorem 2.4.2 in @nelsen2006] and conditional independence [Theorem 1 in @gonzalezlopez2024]. Therefore, having the notion of partial copula is of great relevance to fully study the stochastic dependence between two variables after controlling for some confounder, because they are a natural extension of the notion of partial correlation.
 
@@ -173,15 +173,15 @@ From this result, it also becomes clear that when $(X, Y)$ are conditionally ind
 \begin{remark}\label{rem:partial-copula-necessary-not-sufficient}
 Corollary \ref{cor:partial-conditional-copula} entails that, if $X \independent Y | Z$, then $C_{X,Y;Z}(x, y) = xy$ (or, equivalently, $\UX$ and $\UY$ are independent).
 
-On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts \citep{nelsen2012, gonzalezlopez2024}}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition \ref{def:partial-copula},
+On the other hand, if $\UX$ and $\UY$ are independent, it is not necessarily true that $X \independent Y | Z$. Consider the following example\footnote{It is interesting noticing that, if $X \independent Z$, $Y \independent Z$ and $X,Y \sim U(0,1)$, then this example produces a trivariate Farlie-Gumbel-Morgenstern copula that commonly appears in the literature as a counterexample for certain statistical dependence facts \citep{nelsen2012, gonzalezlopez2024}}: if $Z \sim U(0,1)$ and $C_{X,Y|Z=z}(x, y) = xy + (2z - 1)xy(1-x)(1-y)$ (that is, a Farlie-Gumbel-Morgenstern copula with parameter $2z - 1$), then from Proposition \ref{prop:partial-copula},
 $$C_{X,Y;Z}(x, y) = \int_0^1 [xy + (1-2z)xy(1-x)(1-y)] dz = xy,$$
 which is the independence copula, which entails, from the definition of the partial copula, that $\UX$ and $\UY$ are independent. However, except for $Z = 0.5$, $X$ and $Y$ are not conditionally independent given $Z = z$.
 
 Therefore, $\UX \independent \UY$ is a necessary but not sufficient condition for $X \independent Y | Z$. A possible explanation for this fact is that, in the example presented in the remark, the conditional association of $(X, Y)$ given $Z = z$ is positive for some values of $z$ and negative for other values of $z$. In this sense, the partial copula represents a kind of "average conditional association"; this fact is shown in next remark.
 \end{remark}
 
-\begin{remark}
-Let $g(x, y, z) = C_{X,Y|Z=z}(x, y)$. $g(x, y, Z)$ is a random variable, and Proposition \ref{def:partial-copula} entails that
+\begin{remark}\label{rem:partial-copula-expected-conditional-copula}
+Let $g(x, y, z) = C_{X,Y|Z=z}(x, y)$. $g(x, y, Z)$ is a random variable, and Proposition \ref{prop:partial-copula} entails that
 $$C_{X,Y;Z}(x, y) = E[g(x, y, Z)],$$
 which means that the partial copula is the expected conditional copula.
 \end{remark}
@@ -221,7 +221,7 @@ $$k \geq D(X, Y | Z = z) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y|Z=z}(x, y) - xy|),$$
 which entails that $|C_{X,Y|Z=z}(x, y) - xy| \leq k/4$ for every $x, y \in [0, 1]$, $z \in \mathbb{R}$. Therefore,
 $$C_{X,Y|Z=z}(x, y) \in \left[xy - \frac{k}{4}, xy + \frac{k}{4}\right].$$
 
-The remainder of the proof comes from remembering that the partial copula evaluated in a point $(x, y) \in [0, 1]^2$ is the expectation of a random variable (see Remark \ref{rem:partial-copula-necessary-not-sufficient}), which enables using the monotonicity of expectation: property E2 of section 3.3 of \citet{james1981} readily entails that, if a random variable belongs almost surely to an interval, then the same happens to its expectation. Therefore,
+The remainder of the proof comes from remembering that the partial copula evaluated in a point $(x, y) \in [0, 1]^2$ is the expectation of a random variable (see Remark \ref{rem:partial-copula-expected-conditional-copula}), which enables using the monotonicity of expectation: property E2 of section 3.3 of \citet{james1981} readily entails that, if a random variable belongs almost surely to an interval, then the same happens to its expectation. Therefore,
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
 for every $x, y \in [0, 1]$. Therefore, $|C_{X,Y;Z}(x, y) - xy| \leq k/4$, which entails that
 $$D(\UX, \UY) = 4 \sup_{x,y \in [0,1]} (|C_{X,Y}(x, y) - xy|) \leq k.$$
@@ -237,7 +237,7 @@ $$\max(-1, -3k) \leq \rho(X, Y; Z) \leq \min(1, 3k).$$
 \end{proposition}
 
 \begin{proof}
-The proof of Proposition \ref{def:pearson-bounds} entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+The proof of Proposition \ref{prop:partial-copula-independence} entails that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4},$$
 which entails that
 $$\int_0^1 \int_0^1 C_{X,Y;Z}(x, y) dx dy \in \left[\frac{1-k}{4}, \frac{1+k}{4}\right].$$
@@ -255,7 +255,7 @@ $$\max(-1, -2k) \leq \tau(X, Y; Z) \leq \min(1, 2k).$$
 \end{proposition}
 
 \begin{proof}
-We have seen in the proof of Proposition \ref{def:pearson-bounds} that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
+We have seen in the proof of Proposition \ref{prop:partial-copula-independence} that, if $(D(X, Y | Z = z)) \leq k$ for all $z \in \mathbb{R}$, then
 $$xy - \frac{k}{4} \leq C_{X,Y;Z}(x, y) \leq xy + \frac{k}{4}.$$
 Therefore, inserting $U_X$ and $U_Y$ as arguments, we have
 $$U_X U_Y - \frac{k}{4} \leq C_{X,Y;Z}(U_X, U_Y) \leq U_X U_Y + \frac{k}{4}.$$
@@ -272,7 +272,7 @@ As in the previous osu proof, the final bounds are obtained using the fact that 
 
 Additionally, the connection between the correlation in the conditional copulas and in the partial copula can be summarized in the following theorem.
 
-\begin{proposition}
+\begin{proposition}\label{prop:pearson-partial-conditional}
 Let $X, Y, Z$ be jointly continuous random variables. Then,
 $$\rho(X, Y; Z) = \int_{-\infty}^{\infty} \rho(X, Y | Z = z) f_Z(z) dz.$$
 \end{proposition}
@@ -539,7 +539,7 @@ scenario_info <- data.frame(
 
 ```
 
-The theoretical results in Section 3 establish that the partial copula $C_{X,Y;Z}$ captures the dependence between $X$ and $Y$ after removing the effect of $Z$. In particular, Proposition \ref{prop:partial-copula-independence} shows that the Pearson correlation induced by the partial copula equals the expected conditional correlation, while Proposition \ref{prop:quadrant-dependence} establishes that the sign of quadrant dependence is preserved when it is constant across all conditional copulas. In this section, we conduct a simulation study to illustrate these results and to demonstrate how the partial copula can reveal the true conditional association structure when marginal correlations are confounded.
+The theoretical results in Section 3 establish that the partial copula $C_{X,Y;Z}$ captures the dependence between $X$ and $Y$ after removing the effect of $Z$. In particular, Proposition \ref{prop:pearson-partial-conditional} shows that the Pearson correlation induced by the partial copula equals the expected conditional correlation, while Proposition \ref{prop:quadrant-dependence} establishes that the sign of quadrant dependence is preserved when it is constant across all conditional copulas. In this section, we conduct a simulation study to illustrate these results and to demonstrate how the partial copula can reveal the true conditional association structure when marginal correlations are confounded.
 
 ## Design
 
@@ -549,7 +549,7 @@ where $h_2(u, v; C) = \partial C(u,v)/\partial v$ is the conditional distributio
 
 To assess how confounding and conditional dependence interact, we compare the marginal and partial rank correlations. Specifically, we compute Spearman's $\rho$ and Kendall's $\tau$ for both the original pair $(X, Y)$ and the partial copula pair $(U_X, U_Y)$. A discrepancy between these quantities indicates confounding: dependence between $X$ and $Y$ that is induced by $Z$ rather than by direct conditional association.
 
-We consider eleven scenarios, summarized in Table 1. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$ indicates the sign of dependence in each pair copula: $+$ for positive, $-$ for negative, and $\varnothing$ for independence. Scenarios 1--10 satisfy the simplifying assumption, so that $C_{X,Y|Z=z}$ does not vary with $z$ and Corollary \ref{cor:partial-conditional-copula} applies. Scenario 11 violates the simplifying assumption by letting the conditional copula parameter vary as a function of $Z$ through specifications $\theta(z) = \exp(z)$, $\theta(z) = -\exp(z)$, and $\theta(z) = 1 - 2z$; the last of these illustrates Remark \ref{rem:remark-2}, where positive and negative conditional associations cancel out in expectation.
+We consider eleven scenarios, summarized in Table 1. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$ indicates the sign of dependence in each pair copula: $+$ for positive, $-$ for negative, and $\varnothing$ for independence. Scenarios 1--10 satisfy the simplifying assumption, so that $C_{X,Y|Z=z}$ does not vary with $z$ and Corollary \ref{cor:partial-conditional-copula} applies. Scenario 11 violates the simplifying assumption by letting the conditional copula parameter vary as a function of $Z$ through specifications $\theta(z) = \exp(z)$, $\theta(z) = -\exp(z)$, and $\theta(z) = 1 - 2z$; the last of these illustrates Remark \ref{rem:partial-copula-necessary-not-sufficient}, where positive and negative conditional associations cancel out in expectation.
 
 Within each scenario, we consider multiple copula families (Frank, Gumbel, Clayton, and Gaussian) across a range of parameter values to ensure robustness of the findings. Negative dependence for Gumbel and Clayton copulas is achieved via 90-degree rotation.
 
