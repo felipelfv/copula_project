@@ -3,7 +3,7 @@ title: "Covariate-adjusted statistical dependence representation through partial
 author:
 - Vinícius Litvinoff Justus (Carlos III University of Madrid, Spain)
 - Felipe Fontana Vieira (Ghent University, Belgium)
-date: "December 2025"
+date: "March 2026"
 output:
   pdf_document:
     latex_engine: xelatex
@@ -21,6 +21,7 @@ header-includes:
 - \newtheorem{proposition}{Proposition}
 - \newtheorem{corollary}{Corollary}
 - \newtheorem{remark}{Remark}
+- \newtheorem{example}{Example}
 - \newcommand{\UX}{U_X}
 - \newcommand{\UY}{U_Y}
 - \newcommand{\independent}{\perp\!\!\!\perp}
@@ -52,9 +53,9 @@ In the same way that using a single numerical index (such as the expectation) is
 
 Partial copulas have been introduced in @bergsma2004 as a tool to construct a conditional independence test [which also have been explored in @bergsma2011; @patra2016; and @petersen2021], and their use in vine copula and stochastic process modeling have been discussed in the literature [@bladt2022; @bauer2016; @spanhel2019]. However, to the best of our knowledge, the use of this notion as a way to formally study covariate-adjusted dependence have not been explored enough in the literature [despite the existence of some references exploring related matters, see @gijbels2015 and @spanhel2016]. In the context of linear models, the use of copulas to enable causal inference was proposed in @park2012 and further studied in @falkenstrom2023; the method proposed by the authors is a data-driven method that attempts to remove the confounder effect without measuring the confounding variable directly (which may require strong untestable assumptions). More recently, the use of vine copulas in causal inference was considered by @justus2024 and @czado2025 - however, to the best of our knowledge, the use of partial copulas to quantify causal effects is not yet properly explored in the literature.
 
-Our main contributions are twofold. First, we give a practical interpretation of the notion of partial copula as a nonlinear analogue of partial correlation, suggesting that its use should not be limited to conditional independence testing. Second, we prove several results showing how properties of the conditional copulas - such as Kolmogorov distance dependence, quadrant positive dependence and Spearman's correlation - constrain the form of the partial copula.
+Our main contributions are twofold. First, we give a practical interpretation of the notion of partial copula as a nonlinear analogue of partial correlation, suggesting that its use should not be limited to conditional independence testing. Second, we prove several results showing how properties of the conditional copulas - such as Kolmogorov distance dependence, quadrant positive dependence and Spearman's correlation - constrain the form of the partial copula. Additionally, the results are illustrated through simulations.
 
-The paper is organized as follows. Next section provides all the necessary background to the study of partial copulas: Rosenblatt transformations, probability integral transform and copula functions are introduced. Section 3 is divided in two subsections, the first one discussing the interpretation of partial copula and the second one introducing new results connecting conditional and partial copulas. A simulation study is conducted in Section 4, and final considerations are given in Section 5.
+The paper is organized as follows. Next section provides all the necessary background to the study of partial copulas: Rosenblatt transformations, probability integral transform and copula functions are introduced. Section 3 is divided in three subsections, the first two discussing the interpretation of partial copula and the last one introducing new results connecting conditional and partial copulas. A simulation study is conducted in Section 4, and final considerations are given in Section 5.
 
 # Background
 
@@ -187,6 +188,32 @@ $$C_{X,Y;Z}(x, y) = E[g(x, y, Z)],$$
 which means that the partial copula is the expected conditional copula.
 \end{remark}
 
+## Partial copula as an extension of partial correlation
+
+Next remark underscores the connection between the partial copula and the notion of partial correlation.
+
+\begin{remark}\label{rem:partial-correlation}
+A possible way to define the partial correlation between two random variables $X$ and $Y$, given $Z$, is to construct two regression models $X = \alpha + \beta Z + \epsilon_{X;Z}$ and $Y = \gamma + \theta Z + \epsilon_{Y;Z}$ and them compute the Pearson's correlation between the error terms $\epsilon_{X;Z}$ and $\epsilon_{Y;Z}$ \citep{kim2015}.
+
+More recently, \cite{patra2016} studied the problem of how to construct a nonparametric notion of error term, that is, a notion of error that does not assume a specific functional form for the relationship between the regressor and the response variable. Imposing some conditions that are reasonable to expect from a notion of error term (such as being independent fro the regressor), \cite{patra2016} showed that the Rosenblatt transforms $F_{X|Z}(X|Z)$ and $F_{Y|Z}(Y|Z)$ satisfy those conditions and, therefore, may be seen as a general notion of error term. \citep[for further considerations, see also Section 4 of][]{justus2024}
+
+Partial copulas are the joint CDF of the nonparametric error terms $F_{X|Z}(X|Z)$ and $F_{Y|Z}(Y|Z)$, and, therefore, can be seen as a nonparametric extension of the notion of partial correlation.
+\end{remark}
+
+Previous results in the literate have established that zero partial correlation is not equivalent to conditional independence, except in some special cases such as the multivariate normal distribution [@baba2004]. Next example shows that, even under conditional independence, the partial correlation may be arbitrarily close to 1, which suggests that the partial correlation may be a very poor measure of covariate-adjusted association.
+
+\begin{example}\label{ex:partial-correlation}
+Let be $Z \sim N(0,1)$. Let $X|Z=z \sim N(z^2, \sigma^2)$ and $Y|Z=z \sim N(z^2, \sigma^2)$ be conditionally independent given $Z=z$. It is straightforward to see that, in this case,
+$$Corr(X,Z) = Corr(Y,Z) = 0,$$
+which entails, from the definition of partial correlation, that $Corr(X,Y;Z) = Corr(X,Y)$. On the other hand, $X$ and $Y$ are exchangeable and, from Theorem 2 in \cite{oneill2009}, it holds that
+$$Corr(X,Y) =  \frac{Var(E(X|Z))}{Var(E(X|Z)) + E(Var(X|Z))} = \frac{Var(Z^2)}{Var(Z^2) + \sigma^2}.$$
+Therefore,
+$$Corr(X,Y;Z) = Corr(X,Y) = \frac{2}{2 + \sigma^2} > 0,$$
+which becomes arbitrarily close to 1 as $\sigma^2$ approaches to 0, even though $X$ and $Y$ are conditionally independent given $Z$.
+\end{example}
+
+The result seen in Example \ref{ex:partial-correlation} may look worrying: even when two variables are conditionally independent given a covariate, their partial correlation may be close to 1. An intuitive explanation for this fact may comes from Remark \ref{rem:partial-correlation}: given that the partial correlation is the Pearson's correlation between the error terms of two linear regression models, only the "linear effect" of $Z$ on the variables is being "removed". In Example \ref{ex:partial-correlation}, the expectation of each variable given $Z$ is not linear (not even monotonic), and, therefore, the partial correlation fails in removing the effect of $Z$ on the variables. On the other hand, if  $X$ and $Y$ are conditionally independent given $Z$, then the partial copula is always the independence copula. In this sense, the partial copula fully remove the "spurious association" induced by $Z$. Therefore, except when a researcher has strong reasons to make some parametric assumptions (such as linearity), the partial copula looks to be a much more appropriate notion for representing covariate-adjusted statistical association.
+
 ## Effect of properties of the conditional copulas on the partial copula
 
 Given the functional relationship between the partial and the conditional copulas, an interesting research line that emerges is studying in what extent properties of the conditional copulas constrain the properties of the partial copula. A first result on this matter is given by next proposition. The result is based on the notions of quadrant positive and quadrant negative dependence: a copula $C$ is said to have quadrant positive dependence (QPD) if $C(u, v) \geq uv$ for all $(u, v) \in [0,1]^2$. In an analogous way, the copula has quadrant negative dependence (QND) if $C(u, v) \leq uv$ for all $(u, v) \in [0,1]^2$ [@joe2014]. A direct consequence of the fact that the partial copula is an expected conditional copula is given by the following proposition.
@@ -270,7 +297,7 @@ The final argument comes from remembering that, according to Theorem 5.1.3 in \c
 $$\frac{\rho(X,Y;Z) + 3}{3} - k -1 \leq \tau(X, Y; Z) \leq \frac{\rho(X,Y;Z) + 3}{3} + k -1,$$
 and, from the inequality $-3k \leq \rho(X, Y; Z) \leq 3k,$ it follows that
 $$-2k \leq \tau(X, Y; Z) \leq 2k.$$
-As in the previous osu proof, the final bounds are obtained using the fact that Kendall's coefficient belongs to the $[-1, 1]$ range \citep[see Theorem 5.1.9 in][]{nelsen2006}.
+As in the previous proof, the final bounds are obtained using the fact that Kendall's coefficient belongs to the $[-1, 1]$ range \citep[see Theorem 5.1.9 in][]{nelsen2006}.
 \end{proof}
 
 Additionally, the connection between the correlation in the conditional copulas and in the partial copula can be summarized in the following theorem.
@@ -292,23 +319,15 @@ Now using representation from Proposition \ref{prop:partial-copula}, we obtain
 \end{align*}
 \end{proof}
 
-That is, the Spearman's correlation induced by the partial copula is the expected conditional Spearman's correlation - this greatly clarifies the role of conditional correlations in determining partial correlation.
+That is, the Spearman's correlation induced by the partial copula is the expected conditional Spearman's correlation - this greatly clarifies the role of conditional correlations in determining partial correlation. Finally, a consequence of this result in a family of copulas studied in @rodriguezlallena2004 is illustrated in the following example.
 
-Finally, the next result shows that, when the conditional copulas $C_{X,Y|Z=z}$ can be parametrized in a specific way such that all the conditional copulas belong to the nonparametric family introduced in @rodriguezlallena2004, then the resulting partial copula also belongs to that family.
-
-\begin{proposition}
-If the conditional copula has the functional form
-$$C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y),$$
-where $f, g, h$ are real functions, then the partial copula of $(X, Y)$ adjusted by $Z$ is given by
-$$C_{X,Y;Z}(x, y) = xy + \theta f(x) g(y),$$
-where $\theta = \int_{-\infty}^{\infty} h(z) f_Z(z) dz$.
-\end{proposition}
-
-\begin{proof}
-This result is a direct consequence of applying Proposition \ref{prop:partial-copula} in the conditional copulas $C_{X,Y|Z=z}(x, y) = xy + h(z)f(x)g(y)$.
-\end{proof}
-
-The family introduced in @rodriguezlallena2004 encompasses the Farlie-Gumbel-Morgenstern Copula, and, for this reason, can be considered a disturbance of independence condition. @komelj2010 showed that all copulas on this family have Spearman's correlation coefficient belonging to $[-3/4, 3/4]$, and @garcia2016 proved that the copulas of @rodriguezlallena2004 maximize a certain type of entropy. In this sense, the last proposition gives an additional support into the insight that, when all the conditional copulas are close to the independence, then the partial copula is also close to independence.
+\begin{example}
+\cite{rodriguezlallena2004} studied a nonparametric of copulas where the copula of two random variables $X',Y'$ can be written as $C_{X',Y'}(x, y) = xy + f(x)g(y)$. Now, consider a case where all the conditional copulas of $X,Y$ given $Z$ can be written as
+$$C_{X,Y|Z=z}(x, y) = xy + f(x,z)g(y,z),$$
+which means that all the conditional copulas belong to the family of copulas studied in \cite{rodriguezlallena2004}. \cite{komelj2010} showed that all copulas on this family have Spearman's correlation coefficient belonging to $[-3/4, 3/4]$ Therefore, applying Proposition \ref{prop:spearman-partial-conditional} and monotonicity of expectation \citep[property E2 of section 3.3 of][]{james1981}, is straightforward to see that
+$$-\frac{3}{4} \leq \rho(X, Y; Z) \leq \frac{3}{4}.$$
+Therefore, all the conditional copulas belonging to the family of copulas studied in \cite{rodriguezlallena2004} entails that the Spearman's correlation coefficient in the partial copula is also bounded by $[-3/4, 3/4]$.
+\end{example}
 
 # Simulation study
 
@@ -656,6 +675,8 @@ In the context of causal inference, if $Z$ is a confounding variable, the depend
 Finally, a simulation study was conduced to compare how the partial and the marginal copulas may be different. In scenarios presenting conditional independence (scenarios 2, 3 and 4), the partial copula is the independence copula, while the marginal copula contains the spurious association induced by $Z$. In scenarios where $Z$ is both positively associated to $X$ and $Y$ or both negatively associated to them (1,5,6,7), the association observed in the marginal copula was stronger, while in the scnearios with "opposite confounding" (8 and 9) the partial copula shows stronger dependence. In scenarios with no confounding (10), the marginal and the partial copula are the same. Finally, scenario 11 illustrated cases violating simplifying assumption, which shows a fundamental difference between partial and conditional copulas: conditional copulas depend on the specification of the value being conditioned in the variable $Z$, while the partial copula does not. In this sense, the partial copula may be seen as a "summary" of the conditional copulas across all values of $Z$.
 
 The diversity of scenarios simulated shows that, in several contexts, the marginal association and the average conditional association may be very different - including scenarios known as Simpson's paradox, where even the signs of correlation coefficients are different. In causal inference literature [@pearl2009; @pearl2016], it is well known that marginal associations may be very different from causal effects due to confounding. The results in this paper show that the partial copula is a useful tool to estimate the average conditional association, which may be interpreted as a causal effect under standard assumptions in causal inference. From this paper, we hope to have showed both the importance of using conditional association instead of marginal association in several contexts, and the capability of the partial copula to capture this conditional association in a general way.
+
+Some directions for future research include studying directed dependence coefficients [@azadkia2021simple; @fuchs] in the context of partial copulas, and exploring the use of partial copulas in the context of causal discovery algorithms. Furthermore, further advances on the estimation of partial copulas from real data is of great interest for the scientific community, since it would allow to apply the insights of this paper in empirical contexts.
 
 \newpage
 
