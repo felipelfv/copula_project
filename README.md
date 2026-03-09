@@ -7,6 +7,10 @@ This repository contains the code and manuscript for the paper *"Covariate-adjus
 ```
 .
 ├── manuscript.Rmd          # Main manuscript (text, figures, and simulation code)
+├── manuscript.tex          # Generated LaTeX source
+├── manuscript.pdf          # Compiled PDF
+├── manuscript_files/
+│   └── figure-latex/       # Generated figures used by the manuscript
 ├── simulation_and_plots.R  # Standalone simulation and plotting script
 ├── references.bib          # BibTeX references
 ├── gen_env.R               # Script to generate the Nix environment (uses {rix})
@@ -43,7 +47,13 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    nix-shell
    ```
 
-3. **Render the manuscript:**
+3. **Build the environment:**
+
+   ```bash
+   nix-build
+   ```
+
+4. **Render the manuscript:**
 
    ```bash
    Rscript -e "rmarkdown::render('manuscript.Rmd')"
