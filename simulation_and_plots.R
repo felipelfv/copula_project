@@ -44,8 +44,8 @@ configs <- list(
   
   list(scen = 5, fam = "frank",    pars = list(c(1,1,-1), c(1,1,-3), c(1,1,-5))),
   list(scen = 5, fam = "gaussian", pars = list(c(0.2,0.2,-0.2), c(0.2,0.2,-0.5), c(0.2,0.2,-0.7))),
-  list(scen = 5, fam = "frank",    pars = list(c(5,5,-1), c(5,5,-0.5)), trial = TRUE),
-  list(scen = 5, fam = "gaussian", pars = list(c(0.7,0.7,-0.2), c(0.7,0.7,-0.1)), trial = TRUE),
+  list(scen = 5, fam = "frank",    pars = list(c(5,5,-1), c(5,5,-0.5))),
+  list(scen = 5, fam = "gaussian", pars = list(c(0.7,0.7,-0.2), c(0.7,0.7,-0.1))),
   
   list(scen = 6, fam = "frank",      pars = list(c(-1,-1,1), c(-3,-3,1), c(-5,-5,1))),
   list(scen = 6, fam = "gumbel_90",  pars = list(c(1.5,1.5,1.5), c(2,2,1.5), c(3,3,1.5)), rot_xz = 90, rot_yz = 90),
@@ -99,13 +99,13 @@ for (cfg in configs) {
     if (is.null(case_counter[[scen_key]])) case_counter[[scen_key]] <- 0
     case_counter[[scen_key]] <- case_counter[[scen_key]] + 1
     case_letter <- letters[case_counter[[scen_key]]]
-    case_suffix <- if (isTRUE(cfg$trial)) "*" else ""
+    case_suffix <- ""
     
     display_fam <- paste0(toupper(substr(cfg$fam, 1, 1)), substr(cfg$fam, 2, nchar(cfg$fam)))
     par_xz_str <- ifelse(is.na(p[1]), "ø", p[1])
     par_yz_str <- ifelse(is.na(p[2]), "ø", p[2])
     par_xy_z_str <- ifelse(isTRUE(cfg$cond_indep), "ø", p[3])
-    label <- sprintf("%s(%s,%s,%s)", display_fam, par_xz_str, par_yz_str, par_xy_z_str)
+    label <- sprintf("%s, θ = (%s, %s, %s)", display_fam, par_xz_str, par_yz_str, par_xy_z_str)
     
     rho_xy <- cor(df$X, df$Y, method = "spearman")
     rho_uv <- cor(df$U_X, df$U_Y, method = "spearman")
@@ -161,9 +161,9 @@ simulate_nonsimplified <- function(par_func, family = "frank") {
 }
 
 nonsimplified_configs <- list(
-  list(case = "11a", family = "frank",    par_func = function(z) exp(z),  label = "Frank(exp(z))"),
-  list(case = "11b", family = "frank",    par_func = function(z) -exp(z), label = "Frank(-exp(z))"),
-  list(case = "11c", family = "gaussian", par_func = function(z) 1 - 2*z, label = "Gaussian(1-2z)")
+  list(case = "11a", family = "frank",    par_func = function(z) exp(z),  label = "Frank, θ(z) = exp(z)"),
+  list(case = "11b", family = "frank",    par_func = function(z) -exp(z), label = "Frank, θ(z) = -exp(z)"),
+  list(case = "11c", family = "gaussian", par_func = function(z) 1 - 2*z, label = "Gaussian, θ(z) = 1-2z")
 )
 
 data_11 <- data.frame()
