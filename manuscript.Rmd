@@ -9,6 +9,7 @@ output:
     latex_engine: xelatex
     number_sections: true
     citation_package: natbib
+    keep_tex: true
     toc: false
   html_document:
     toc: false
