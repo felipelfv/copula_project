@@ -1,7 +1,7 @@
 ---
 title: "Covariate-adjusted statistical dependence representation through partial copulas: bounds and new insights"
 author:
-- Vinícius Litvinoff Justus (Carlos III University of Madrid, Spain)
+- Vinícius Litvinoff Justus (Carlos III University of Madrid, Spain)^[viniliff@gmail.com; vlitvino@est-econ.uc3m.es]
 - Felipe Fontana Vieira (Ghent University, Belgium)
 date: "March 2026"
 output:
@@ -649,7 +649,11 @@ Finally, a simulation study was conducted to compare how the partial and the mar
 
 The diversity of scenarios simulated shows that, in several contexts, the marginal association and the average conditional association may be very different - including scenarios known as Simpson's paradox, where even the signs of correlation coefficients are different. In causal inference literature [@pearl2009; @pearl2016], it is well known that marginal associations may be very different from causal effects due to confounding. The results in this paper show that the partial copula is a useful tool to estimate the average conditional association, which may be interpreted as a causal effect under standard assumptions in causal inference. From this paper, we hope to have showed both the importance of using conditional association instead of marginal association in several contexts, and the capability of the partial copula to capture this conditional association in a general way.
 
-Some directions for future research include studying directed dependence coefficients [@azadkia2021simple; @fuchs] in the context of partial copulas, and exploring the use of partial copulas in the context of causal discovery algorithms. Furthermore, further advances on the estimation of partial copulas from real data is of great interest for the scientific community, since it would allow to apply the insights of this paper in empirical contexts.
+Some directions for future research include studying directed dependence coefficients [@azadkia2021simple; @fuchs] in the context of partial copulas, and exploring the use of partial copulas in the context of causal discovery algorithms. Furthermore, further advances on the estimation of partial copulas from real data is of great interest for the scientific community, since it would allow to apply the insights of this paper in empirical contexts. @bergsma2004 discussed the use of kernel estimators to estimate the conditional CDFs, however further exploration on the properties of such estimators seems necessary. Although there is a rich literature in the estimation of conditional copulas [e.g., @VERAVERBEKE2011; @math14050914], the estimation of partial copulas itself is a subject that require further developments.
+
+# Acknowledgment
+
+The authors thank Professor Concepción Ausín Olivera (Carlos III University of Madrid, Spain) for the feedback given on a previous version of this manuscript, which helped improve this work.
 
 \newpage
 
