@@ -40,9 +40,6 @@ library(dplyr)
 library(tidyr)
 library(knitr)
 library(kableExtra)
-
-set.seed(123)
-n <- 5000
 ```
 
 # Introduction
@@ -332,9 +329,6 @@ Therefore, all the conditional copulas belonging to the family of copulas studie
 # Simulation study
 
 ```{r simulation, echo=FALSE}
-library(rvinecopulib); library(ggplot2)
-library(dplyr); library(tidyr)
-
 set.seed(123); n <- 5000
 
 structure <- cvine_structure(c(1, 2, 3))
