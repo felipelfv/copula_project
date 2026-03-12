@@ -26,11 +26,7 @@ The project uses [Nix](https://nixos.org/) to guarantee a fully reproducible env
 
 ### Prerequisites
 
-Install Nix by following the instructions at https://nixos.org/download or using the [Determinate Systems installer](https://github.com/DeterminateSystems/nix-installer):
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-```
+Install Nix by following the instructions at https://nixos.org/download
 
 ### Steps
 
