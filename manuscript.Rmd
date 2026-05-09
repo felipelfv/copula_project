@@ -18,6 +18,10 @@ header-includes:
 - \usepackage{amsmath}
 - \usepackage{amssymb}
 - \usepackage{amsthm}
+- \usepackage{newunicodechar}
+- \newunicodechar{ρ}{\ensuremath{\rho}}
+- \newunicodechar{τ}{\ensuremath{\tau}}
+- \newunicodechar{θ}{\ensuremath{\theta}}
 - \newtheorem{definition}{Definition}
 - \newtheorem{proposition}{Proposition}
 - \newtheorem{corollary}{Corollary}
@@ -37,7 +41,6 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, fig.align 
 library(rvinecopulib)
 library(ggplot2)
 library(dplyr)
-library(tidyr)
 library(knitr)
 library(kableExtra)
 ```
@@ -326,7 +329,7 @@ $$-\frac{3}{4} \leq \rho(X, Y; Z) \leq \frac{3}{4}.$$
 Therefore, all the conditional copulas belonging to the family of copulas studied in \cite{rodriguezlallena2004} entails that the Spearman's correlation coefficient in the partial copula is also bounded by $[-3/4, 3/4]$.
 \end{example}
 
-# Simulation study
+# Simulation Study
 
 ```{r simulation, echo=FALSE}
 set.seed(123); n <- 5000
@@ -594,7 +597,7 @@ Table: Summary of simulation scenarios. The triplet $(s_{XZ}, s_{YZ}, s_{XY|Z})$
 
 ## Results
 
-The scatter plots in the Appendix display Spearman's $\rho$ and Kendall's $\tau$ for both the marginal pair $(X,Y)$ and the partial copula pair $(U_X, U_Y)$ across all scenarios. The results confirm the theoretical predictions. In conditional independence scenarios (2, 3, and 4), the partial correlations are negligible while marginal correlations can be substantial, demonstrating that the partial copula successfully removes confounding. In scenarios where confounding reinforces conditional dependence (1, 6, and 9), the partial correlations correctly recover the conditional association, which is attenuated relative to the marginal correlations. Notably, scenarios 5, 7, and 8 exhibit Simpson's paradox: marginal and partial correlations have opposite signs. In these scenarios, the confounding effect opposes the conditional dependence --- for instance, in scenario 7 $(-,-,-)$, the product of two negative marginal dependencies induces a positive spurious correlation that counteracts the negative conditional dependence. This illustrates how the partial copula can reveal conditional associations that are masked or reversed by confounding. Finally, Scenario 11 examines violations of the simplifying assumption. In cases 11a and 11b, where $\theta(z) = \exp(z)$ and $\theta(z) = -\exp(z)$ respectively, the sign of conditional dependence remains constant across all values of $Z$, and the partial correlations closely match the marginal correlations, consistent with Proposition \ref{prop:quadrant-dependence}. In contrast, case 11c deserves particular attention. Here the conditional copula parameter $\theta(z) = 1 - 2z$ is a Gaussian copula whose correlation switches sign at $z = 0.5$: for $z < 0.5$ the conditional dependence is positive, while for $z > 0.5$ it becomes negative. As a result, the partial copula --- which averages over all conditional copulas --- yields near-zero partial correlation despite strong conditional dependence for almost all values of $Z$, confirming Remark \ref{rem:partial-copula-necessary-not-sufficient}. Figure \ref{fig:scenario-11c-detail} illustrates this by displaying the conditional scatter plots for $Z < 0.5$ and $Z > 0.5$ alongside the partial copula: the opposing dependence structures are clearly visible in the conditional panels but cancel out in the partial copula. This highlights a fundamental limitation: the partial copula captures average conditional dependence and may not be the best tool when one is interested in local, $z$-specific dependence.
+Table 2 in the Appendix reports Spearman's $\rho$ and Kendall's $\tau$ for both the marginal pair $(X,Y)$ and the partial copula pair $(U_X, U_Y)$ across all scenarios. The results confirm the theoretical predictions. In conditional independence scenarios (2, 3, and 4), the partial correlations are negligible while marginal correlations can be substantial, demonstrating that the partial copula successfully removes confounding. In scenarios where confounding reinforces conditional dependence (1, 6, and 9), the partial correlations correctly recover the conditional association, which is attenuated relative to the marginal correlations. Notably, scenarios 5, 7, and 8 exhibit Simpson's paradox: marginal and partial correlations have opposite signs. In these scenarios, the confounding effect opposes the conditional dependence --- for instance, in scenario 7 $(-,-,-)$, the product of two negative marginal dependencies induces a positive spurious correlation that counteracts the negative conditional dependence. This illustrates how the partial copula can reveal conditional associations that are masked or reversed by confounding. Finally, Scenario 11 examines violations of the simplifying assumption. In cases 11a and 11b, where $\theta(z) = \exp(z)$ and $\theta(z) = -\exp(z)$ respectively, the sign of conditional dependence remains constant across all values of $Z$, and the partial correlations closely match the marginal correlations, consistent with Proposition \ref{prop:quadrant-dependence}. In contrast, case 11c deserves particular attention. Here the conditional copula parameter $\theta(z) = 1 - 2z$ is a Gaussian copula whose correlation switches sign at $z = 0.5$: for $z < 0.5$ the conditional dependence is positive, while for $z > 0.5$ it becomes negative. As a result, the partial copula --- which averages over all conditional copulas --- yields near-zero partial correlation despite strong conditional dependence for almost all values of $Z$, confirming Remark \ref{rem:partial-copula-necessary-not-sufficient}. Figure \ref{fig:scenario-11c-detail} illustrates this by displaying the conditional scatter plots for $Z < 0.5$ and $Z > 0.5$ alongside the partial copula: the opposing dependence structures are clearly visible in the conditional panels but cancel out in the partial copula. This highlights a fundamental limitation: the partial copula captures average conditional dependence and may not be the best tool when one is interested in local, $z$-specific dependence.
 
 
 ```{r scenario-11c-detail, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.height=4, fig.width=10, fig.cap="Scenario 11c: Gaussian copula with $\\theta(z) = 1 - 2z$. Left: conditional scatter for $Z < 0.5$ (positive dependence). Center: conditional scatter for $Z > 0.5$ (negative dependence). Right: partial copula averaging over all $Z$. Color gradient represents $Z$; $\\rho$ denotes Spearman's correlation."}
@@ -657,102 +660,46 @@ The authors thank Professor Concepción Ausín Olivera (Carlos III University of
 
 # Appendix {-}
 
-```{r scatter-fn, echo=FALSE}
-create_scenario_scatter <- function(data, scenario_num) {
+```{r results-table, echo=FALSE}
+results_table <- results %>%
+  arrange(Scenario, Case) %>%
+  select(Case, Parameters, rho_XY, tau_XY, rho_UV, tau_UV)
 
-  scen_data <- data %>% filter(Scenario == scenario_num)
+scenario_counts <- results %>%
+  arrange(Scenario) %>%
+  count(Scenario) %>%
+  pull(n)
 
-  case_order <- scen_data %>%
-    distinct(Case, Case_Label) %>%
-    arrange(Case) %>%
-    pull(Case_Label)
+scenario_titles <- c(
+  "Scenario 1: (+, +, +)",
+  "Scenario 2: (+, +, ind)",
+  "Scenario 3: (-, -, ind)",
+  "Scenario 4: (+, -, ind)",
+  "Scenario 5: (+, +, -)",
+  "Scenario 6: (-, -, +)",
+  "Scenario 7: (-, -, -)",
+  "Scenario 8: (+, -, +)",
+  "Scenario 9: (+, -, -)",
+  "Scenario 10: (ind, ind, $\\cdot$)",
+  "Scenario 11: Simplifying assumption violated"
+)
 
-  plot_data <- scen_data %>%
-    select(Case_Label, X, Y, U_X, U_Y, Z, rho_XY, rho_UV, tau_XY, tau_UV) %>%
-    pivot_longer(cols = c(X, U_X), names_to = "x_type", values_to = "x_val") %>%
-    pivot_longer(cols = c(Y, U_Y), names_to = "y_type", values_to = "y_val") %>%
-    filter((x_type == "X" & y_type == "Y") | (x_type == "U_X" & y_type == "U_Y")) %>%
-    mutate(
-      Type = ifelse(x_type == "X", "Marginal", "Partial"),
-      Type = factor(Type, levels = c("Marginal", "Partial")),
-      Case_Label = factor(Case_Label, levels = case_order)
-    )
+idx <- setNames(scenario_counts, scenario_titles)
 
-  annot_data <- scen_data %>%
-    distinct(Case_Label, rho_XY, rho_UV, tau_XY, tau_UV) %>%
-    pivot_longer(
-      cols = c(rho_XY, rho_UV, tau_XY, tau_UV),
-      names_to = "measure",
-      values_to = "value"
-    ) %>%
-    mutate(
-      Type = ifelse(grepl("UV", measure), "Partial", "Marginal"),
-      Type = factor(Type, levels = c("Marginal", "Partial")),
-      Coef = ifelse(grepl("rho", measure), "rho", "tau"),
-      Case_Label = factor(Case_Label, levels = case_order)
-    ) %>%
-    select(-measure) %>%
-    pivot_wider(names_from = Coef, values_from = value) %>%
-    mutate(label = sprintf("\u03C1=%.2f, \u03C4=%.2f", rho, tau))
-
-  ggplot(plot_data, aes(x = x_val, y = y_val)) +
-    geom_point(aes(color = Z), alpha = 0.4, size = 0.6) +
-    geom_text(data = annot_data, aes(x = 0.95, y = 0.05, label = label),
-              hjust = 1, vjust = 0, size = 2.5, color = "black") +
-    scale_color_viridis_c(option = "viridis", name = "Z") +
-    facet_grid(Case_Label ~ Type, scales = "fixed") +
-    labs(x = NULL, y = NULL) +
-    coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
-    theme_minimal(base_size = 9) +
-    theme(
-      strip.text = element_text(face = "bold", size = 8),
-      strip.text.y = element_text(angle = 0, hjust = 0),
-      legend.position = "right",
-      panel.grid.minor = element_blank()
-    )
-}
-```
-
-```{r scatter-1, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 1 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$. Each panel displays $\\rho$ (Spearman) and $\\tau$ (Kendall). Color gradient represents $Z$."}
-create_scenario_scatter(all_data, 1)
-```
-
-```{r scatter-2, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 2 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$, where ind denotes independence."}
-create_scenario_scatter(all_data, 2)
-```
-
-```{r scatter-3, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 3 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$, where ind denotes independence. (R) indicates 90-degree rotation."}
-create_scenario_scatter(all_data, 3)
-```
-
-```{r scatter-4, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 4 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$, where ind denotes independence."}
-create_scenario_scatter(all_data, 4)
-```
-
-```{r scatter-5, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 5 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$."}
-create_scenario_scatter(all_data, 5)
-```
-
-```{r scatter-6, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 6 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$. (R) indicates 90-degree rotation."}
-create_scenario_scatter(all_data, 6)
-```
-
-```{r scatter-7, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 7 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$. (R) indicates 90-degree rotation."}
-create_scenario_scatter(all_data, 7)
-```
-
-```{r scatter-8, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 8 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$."}
-create_scenario_scatter(all_data, 8)
-```
-
-```{r scatter-9, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 9 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$."}
-create_scenario_scatter(all_data, 9)
-```
-
-```{r scatter-10, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 10 (see Table 1). Each row corresponds to a copula family and parameter triplet $(\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$, where ind denotes independence."}
-create_scenario_scatter(all_data, 10)
-```
-
-```{r scatter-11, echo=FALSE, dev="png", dpi=300, out.width="100%", fig.cap="Scenario 11 (see Table 1). Simplifying assumption violated. The conditional copula parameter $\\theta(z)$ varies with $Z$."}
-create_scenario_scatter(all_data, 11)
+results_table %>%
+  kable(
+    booktabs = TRUE,
+    longtable = TRUE,
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Case", "Specification", "ρ", "τ", "ρ", "τ"),
+    align = "llcccc",
+    caption = "Spearman's $\\rho$ and Kendall's $\\tau$ for the marginal pair $(X, Y)$ and the partial copula pair $(U_X, U_Y)$ across all simulated scenarios. The Specification column reports the copula family and the parameter triplet $\\theta = (\\theta_{XZ}, \\theta_{YZ}, \\theta_{XY|Z})$; (R) indicates a 90-degree rotation and ind denotes independence."
+  ) %>%
+  add_header_above(
+    c(" " = 2, "Marginal $(X, Y)$" = 2, "Partial $(U_X, U_Y)$" = 2),
+    escape = FALSE
+  ) %>%
+  kable_styling(latex_options = c("repeat_header"), font_size = 9) %>%
+  pack_rows(index = idx, escape = FALSE)
 ```
